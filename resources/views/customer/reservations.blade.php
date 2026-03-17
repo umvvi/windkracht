@@ -42,15 +42,8 @@
                     <div style="background: #fef3c7; border: 1px solid #fcd34d; color: #78350f; padding: 1rem; border-radius: 0.3rem; margin-bottom: 1rem;">
                         <p style="font-weight: 700; margin: 0 0 0.5rem 0;">Betaling Vereist</p>
                         <p style="margin: 0 0 0.5rem 0;">Maak een overschrijving van €{{ $reservation->total_price }} naar onze bankrekening.</p>
-                        <p style="margin: 0;">Zodra je hebt betaald, bevestig je betaling hieronder.</p>
+                        <p style="margin: 0; font-size: 0.9rem;">De eigenaar zal uw betaling bevestigen zodra deze is ontvangen.</p>
                     </div>
-
-                    <form action="{{ route('customer.mark-payment', $reservation->id) }}" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="submit" style="background: #d1fae5; color: #065f46; border: 1px solid #86efac; padding: 0.5rem 1rem; border-radius: 0.3rem; font-weight: 700; cursor: pointer;">
-                            Betaling Ontvangen Markeren
-                        </button>
-                    </form>
                     @endif
                 </div>
 
