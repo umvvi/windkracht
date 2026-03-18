@@ -53,15 +53,16 @@
                         <div style="display: grid; gap: 0.75rem;">
                             @foreach ($reservation->lessons as $lesson)
                             <div style="background: #f9fafb; padding: 1rem; border-radius: 0.3rem; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
+                                <div style="flex: 1;">
                                     <p style="font-weight: 700; color: #003d7a; margin: 0 0 0.25rem 0;">{{ $lesson->start_time->format('d-m-Y H:i') }}</p>
                                     <p style="font-size: 0.9rem; color: #666; margin: 0;">Instructeur: {{ $lesson->instructor->personalInformation?->full_name ?? 'Unknown' }}</p>
+                                    <span style="display: inline-block; margin-top: 0.5rem; padding: 0.2rem 0.6rem; border-radius: 0.3rem; background: {{ $lesson->status === 'scheduled' ? '#dbeafe' : '#fee2e2' }}; color: {{ $lesson->status === 'scheduled' ? '#0c4a6e' : '#7f1d1d' }}; font-size: 0.8rem; font-weight: 600;">{{ ucfirst($lesson->status) }}</span>
                                 </div>
-                                @if ($lesson->status === 'scheduled' && $reservation->status === 'confirmed')
+                                @if ($lesson->status === 'scheduled')
                                 <form action="{{ route('customer.cancel-lesson', $lesson->id) }}" method="POST" style="display: inline;">
                                     @csrf
                                     <input type="hidden" name="reason" value="Cancelled by customer">
-                                    <button type="submit" style="color: #dc2626; background: none; border: none; cursor: pointer; text-decoration: underline; font-size: 0.9rem; font-weight: 600;">
+                                    <button type="submit" style="color: #dc2626; background: none; border: none; cursor: pointer; text-decoration: underline; font-size: 0.9rem; font-weight: 600;" onclick="return confirm('Weet je zeker dat je deze les wilt afzeggen?')">
                                         Les Afzeggen
                                     </button>
                                 </form>
