@@ -109,9 +109,9 @@ class CustomerDashboardController extends Controller
             ]);
         }
         
-        if (count($filteredDates) != $package->sessions) {
+        if (count($filteredDates) != $package->num_sessions) {
             return back()->withInput()->withErrors([
-                'session_dates' => 'U moet exact ' . $package->sessions . ' sessie(s) selecteren voor dit pakket.'
+                'session_dates' => 'U moet exact ' . $package->num_sessions . ' sessie(s) selecteren voor dit pakket.'
             ]);
         }
         
