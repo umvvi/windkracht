@@ -142,9 +142,9 @@ class CustomerDashboardController extends Controller
             return \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
         }, $filteredDates));
         
-        if (count($dateObjectsArray) < 2) {
+        if (count($dateObjectsArray) < 1) {
             return back()->withInput()->withErrors([
-                'session_dates' => 'Selecteer ten minste twee verschillende datums.'
+                'session_dates' => 'Selecteer ten minste één lesdatum.'
             ]);
         }
 
@@ -158,7 +158,8 @@ class CustomerDashboardController extends Controller
                     ]);
                 }
                 
-                if ($diff < 3) {
+                // Only check 3-hour separation if there are 2+ sessions
+                if ($package->num_sessions > 1 && $diff < 3) {
                     return back()->withInput()->withErrors([
                         'session_dates' => 'Lessen moeten minimaal 3 uur van elkaar verwijderd zijn.'
                     ]);
