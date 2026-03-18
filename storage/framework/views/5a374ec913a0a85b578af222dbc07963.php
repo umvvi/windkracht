@@ -27,6 +27,7 @@
                                 <th style="padding: 1rem; text-align: left; color: #6b7280; font-weight: 600; font-size: 0.9rem;">Datum & Tijd</th>
                                 <th style="padding: 1rem; text-align: left; color: #6b7280; font-weight: 600; font-size: 0.9rem;">Locatie</th>
                                 <th style="padding: 1rem; text-align: left; color: #6b7280; font-weight: 600; font-size: 0.9rem;">Status</th>
+                                <th style="padding: 1rem; text-align: left; color: #6b7280; font-weight: 600; font-size: 0.9rem;">Acties</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,6 +36,30 @@
                                 <td style="padding: 1rem; color: #1f2937;"><?php echo e($lesson->start_time->format('d-m-Y H:i')); ?></td>
                                 <td style="padding: 1rem; color: #1f2937;"><?php echo e($lesson->location->name); ?></td>
                                 <td style="padding: 1rem; color: #1f2937;"><span style="padding: 0.4rem 0.8rem; background: #d1fae5; color: #065f46; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600;"><?php echo e($lesson->status === 'scheduled' ? 'Ingepland' : ($lesson->status === 'cancelled' ? 'Afgebroken' : ucfirst($lesson->status))); ?></span></td>
+                                <td style="padding: 1rem;">
+                                    <?php if($lesson->status === 'scheduled'): ?>
+                                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                        <form action="<?php echo e(route('instructor.cancel-lesson', $lesson->id)); ?>" method="POST" style="display: inline;">
+                                            <?php echo csrf_field(); ?>
+                                            <input type="hidden" name="type" value="instructor_illness">
+                                            <input type="hidden" name="reason" value="Ziekte instructeur">
+                                            <button type="submit" style="background: #f97316; color: white; border: none; padding: 0.4rem 0.75rem; border-radius: 0.3rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ea580c'" onmouseout="this.style.background='#f97316'" onclick="return confirm('Les afzeggen wegens ziekte?')">
+                                                Ziekte
+                                            </button>
+                                        </form>
+                                        <form action="<?php echo e(route('instructor.cancel-lesson', $lesson->id)); ?>" method="POST" style="display: inline;">
+                                            <?php echo csrf_field(); ?>
+                                            <input type="hidden" name="type" value="bad_weather">
+                                            <input type="hidden" name="reason" value="Slechte weersomstandigheden">
+                                            <button type="submit" style="background: #06b6d4; color: white; border: none; padding: 0.4rem 0.75rem; border-radius: 0.3rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#0891b2'" onmouseout="this.style.background='#06b6d4'" onclick="return confirm('Les afzeggen wegens slechte weer?')">
+                                                Weer
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <?php else: ?>
+                                    <span style="color: #999; font-size: 0.85rem;">—</span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>

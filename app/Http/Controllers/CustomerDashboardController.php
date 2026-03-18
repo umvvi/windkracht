@@ -182,15 +182,35 @@ class CustomerDashboardController extends Controller
         $availableInstructors = User::where('role', 'instructor')->where('is_active', true)->get();
         $lessonDuration = 2; // Default 2 hours per lesson
         $lessons = [];
+        $lessonDuration = 2.5; // Default 2.5 hours per lesson
 
         foreach ($filteredDates as $dateString) {
             $startTime = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
             $endTime = $startTime->copy()->addHours($lessonDuration);
 
-            // Assign a random instructor from available instructors
-            $instructor = $availableInstructors->isNotEmpty() 
-                ? $availableInstructors->random() 
-                : User::where('role', 'instructor')->first();
+            // Get instructor with no conflicts (lessons must be 3 hours apart minimum)
+            $instructor = null;
+            foreach ($availableInstructors as $potentialInstructor) {
+                $conflicts = \App\Models\Lesson::where('instructor_id', $potentialInstructor->id)
+                    ->where('status', 'scheduled')
+                    ->where(function ($q) use ($startTime, $endTime) {
+                        $q->whereBetween('start_time', [$startTime->copy()->subHours(3), $endTime->copy()->addHours(3)])
+                          ->orWhereBetween('end_time', [$startTime->copy()->subHours(3), $endTime->copy()->addHours(3)]);
+                    })
+                    ->exists();
+                
+                if (!$conflicts) {
+                    $instructor = $potentialInstructor;
+                    break;
+                }
+            }
+
+            if (!$instructor) {
+                $reservation->delete();
+                return back()->withInput()->withErrors([
+                    'session_dates' => 'Geen instructeur beschikbaar voor alle geselecteerde datums. Probeer andere datums.'
+                ]);
+            }
 
             if ($instructor) {
                 $lesson = \App\Models\Lesson::create([
