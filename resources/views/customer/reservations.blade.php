@@ -24,7 +24,11 @@
                     <div>
                         <p style="color: #6b7280; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin: 0 0 0.5rem 0;">STATUS</p>
                         <p style="margin: 0;">
-                            <span style="padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600; background: {{ $reservation->status === 'confirmed' ? '#d1fae5' : '#fef3c7' }}; color: {{ $reservation->status === 'confirmed' ? '#065f46' : '#92400e' }};">{{ ucfirst($reservation->status) }}</span>
+                            @if (!$reservation->payment_received)
+                                <span style="padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600; background: #fef3c7; color: #92400e;">Wachtend op Betaling</span>
+                            @else
+                                <span style="padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600; background: #d1fae5; color: #065f46;">Bevestigd</span>
+                            @endif
                         </p>
                     </div>
                     <div>

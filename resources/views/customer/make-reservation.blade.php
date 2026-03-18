@@ -308,6 +308,25 @@ document.getElementById('reservationForm').addEventListener('submit', function(e
         return;
     }
     
+    // Validate dates are at least 3 hours apart
+    const dateInputs = Array.from(document.querySelectorAll('input[type="datetime-local"]'));
+    const dates = dateInputs
+        .map(input => input.value ? new Date(input.value) : null)
+        .filter(date => date !== null);
+    
+    if (dates.length > 1) {
+        for (let i = 0; i < dates.length; i++) {
+            for (let j = i + 1; j < dates.length; j++) {
+                const diffHours = Math.abs(dates[i] - dates[j]) / (1000 * 60 * 60);
+                if (diffHours < 3) {
+                    e.preventDefault();
+                    alert('Lessen moeten minimaal 3 uur van elkaar verwijderd zijn.');
+                    return;
+                }
+            }
+        }
+    }
+    
     if (isSubmitting) {
         e.preventDefault();
         return;

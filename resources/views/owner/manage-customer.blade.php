@@ -30,7 +30,7 @@
                                 <p style="color: #666; margin: 0.25rem 0 0 0; font-size: 0.9rem;">📍 {{ $reservation->location->name }} • Geboekt: {{ $reservation->created_at->format('d-m-Y') }}</p>
                             </div>
                             <div style="text-align: right;">
-                                <span style="padding: 0.3rem 0.8rem; border-radius: 0.3rem; background: {{ $reservation->status === 'confirmed' ? '#d1fae5' : '#fef3c7' }}; color: {{ $reservation->status === 'confirmed' ? '#065f46' : '#92400e' }}; font-size: 0.85rem; font-weight: 600; display: inline-block;">{{ ucfirst($reservation->status) }}</span>
+                                <span style="padding: 0.3rem 0.8rem; border-radius: 0.3rem; background: {{ !$reservation->payment_received ? '#fef3c7' : '#d1fae5' }}; color: {{ !$reservation->payment_received ? '#92400e' : '#065f46' }}; font-size: 0.85rem; font-weight: 600; display: inline-block;">{{ !$reservation->payment_received ? 'Wachtend op Betaling' : 'Bevestigd' }}</span>
                                 <span style="padding: 0.3rem 0.8rem; border-radius: 0.3rem; background: {{ $reservation->payment_received ? '#d1fae5' : '#fee2e2' }}; color: {{ $reservation->payment_received ? '#065f46' : '#7f1d1d' }}; font-size: 0.85rem; font-weight: 600; display: inline-block; margin-left: 0.5rem;">{{ $reservation->payment_received ? 'Betaald' : 'Openstaand' }}</span>
                             </div>
                         </div>

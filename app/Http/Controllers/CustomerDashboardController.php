@@ -100,9 +100,9 @@ class CustomerDashboardController extends Controller
 
         // Validate all dates are in the future
         $now = \Carbon\Carbon::now();
-        foreach ($request->session_dates as $dateString) {
-            if (!$dateString) continue;
-            
+        $filteredDates = array_filter($request->session_dates);
+        
+        foreach ($filteredDates as $dateString) {
             $date = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
             
             if ($date->isPast()) {
@@ -118,22 +118,37 @@ class CustomerDashboardController extends Controller
             }
         }
 
+        // Check for duplicate or overlapping times (lessons must be at least 3 hours apart)
+        $dateObjectsArray = array_map(function($dateString) {
+            return \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
+        }, $filteredDates);
+
+        for ($i = 0; $i < count($dateObjectsArray); $i++) {
+            for ($j = $i + 1; $j < count($dateObjectsArray); $j++) {
+                $diff = abs($dateObjectsArray[$i]->diffInHours($dateObjectsArray[$j]));
+                
+                if ($diff < 3) {
+                    return back()->withInput()->withErrors([
+                        'session_dates' => 'Lessen moeten minimaal 3 uur van elkaar verwijderd zijn.'
+                    ]);
+                }
+            }
+        }
+
         // Create reservation
         $reservation = Reservation::create([
             'customer_id' => $customer->id,
             'package_id' => $package->id,
             'location_id' => $request->location_id,
             'total_price' => $package->price_per_person * ($package->type === 'duo' ? 2 : 1),
-            'status' => 'confirmed',
+            'status' => 'pending_payment',
         ]);
 
         // Create lessons for each session date
         $availableInstructors = User::where('role', 'instructor')->where('is_active', true)->get();
         $lessonDuration = 2; // Default 2 hours per lesson
 
-        foreach ($request->session_dates as $dateString) {
-            if (!$dateString) continue;
-
+        foreach ($filteredDates as $dateString) {
             $startTime = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
             $endTime = $startTime->copy()->addHours($lessonDuration);
 
@@ -160,7 +175,7 @@ class CustomerDashboardController extends Controller
         // });
 
         return redirect()->route('customer.dashboard')
-            ->with('success', 'Reservation created with ' . count(array_filter($request->session_dates)) . ' lesson(s)! An invoice has been sent to your email.');
+            ->with('success', 'Reservering aangemaakt! Wacht op betaalbevestiging. ' . count($filteredDates) . ' les(sen) ingepland.');
     }
 
     /**
