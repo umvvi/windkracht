@@ -72,8 +72,9 @@ class Lesson extends Model
                 $customer = $this->reservation->customer;
                 $instructorName = $this->instructor->personalInformation->first_name ?? 'Instructeur';
                 Mail::to($customer->email)->send(new LessonCancellation($this, $type, $reason, $instructorName));
+                \Log::info('Lesson cancellation email sent to ' . $customer->email . ' for lesson #' . $this->id . ' (' . $type . ')');
             } catch (\Exception $e) {
-                \Log::warning('Failed to send lesson cancellation email: ' . $e->getMessage());
+                \Log::error('Failed to send lesson cancellation email: ' . $e->getMessage());
             }
         }
     }

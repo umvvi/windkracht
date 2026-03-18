@@ -227,9 +227,10 @@ class CustomerDashboardController extends Controller
 
         // Send reservation confirmation email with payment details
         try {
-            Mail::send(new ReservationConfirmation($reservation, $lessons));
+            Mail::to($customer->email)->send(new ReservationConfirmation($reservation, $lessons));
+            \Log::info('Reservation confirmation email sent to ' . $customer->email . ' for reservation #' . $reservation->id);
         } catch (\Exception $e) {
-            \Log::warning('Failed to send reservation confirmation email: ' . $e->getMessage());
+            \Log::error('Failed to send reservation confirmation email: ' . $e->getMessage());
         }
 
         return redirect()->route('customer.dashboard')

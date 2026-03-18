@@ -85,9 +85,10 @@ class Reservation extends Model
         // Send payment confirmation email
         try{
             $lessons = $this->lessons()->orderBy('start_time')->get();
-            Mail::send(new PaymentConfirmation($this, $lessons));
+            Mail::to($this->customer->email)->send(new PaymentConfirmation($this, $lessons));
+            \Log::info('Payment confirmation email sent to ' . $this->customer->email . ' for reservation #' . $this->id);
         } catch (\Exception $e) {
-            \Log::warning('Failed to send payment confirmation email: ' . $e->getMessage());
+            \Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
         }
     }
 }
