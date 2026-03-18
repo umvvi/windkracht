@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Mail\LessonCancellation;
+use Illuminate\Support\Facades\Mail;
 
 class Lesson extends Model
 {
@@ -63,6 +65,17 @@ class Lesson extends Model
         $this->cancellation_type = $type;
         $this->cancellation_reason = $reason;
         $this->save();
+
+        // Only send email for instructor and bad_weather cancellations (not customer requests)
+        if (in_array($type, ['instructor_illness', 'bad_weather'])) {
+            try {
+                $customer = $this->reservation->customer;
+                $instructorName = $this->instructor->personalInformation->first_name ?? 'Instructeur';
+                Mail::to($customer->email)->send(new LessonCancellation($this, $type, $reason, $instructorName));
+            } catch (\Exception $e) {
+                \Log::warning('Failed to send lesson cancellation email: ' . $e->getMessage());
+            }
+        }
     }
 
     /**

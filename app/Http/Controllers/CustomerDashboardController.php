@@ -8,8 +8,10 @@ use App\Models\Package;
 use App\Models\Reservation;
 use App\Models\Location;
 use App\Models\Lesson;
+use App\Mail\ReservationConfirmation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CustomerDashboardController extends Controller
 {
@@ -179,6 +181,7 @@ class CustomerDashboardController extends Controller
         // Create lessons for each session date
         $availableInstructors = User::where('role', 'instructor')->where('is_active', true)->get();
         $lessonDuration = 2; // Default 2 hours per lesson
+        $lessons = [];
 
         foreach ($filteredDates as $dateString) {
             $startTime = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
@@ -190,7 +193,7 @@ class CustomerDashboardController extends Controller
                 : User::where('role', 'instructor')->first();
 
             if ($instructor) {
-                \App\Models\Lesson::create([
+                $lesson = \App\Models\Lesson::create([
                     'reservation_id' => $reservation->id,
                     'instructor_id' => $instructor->id,
                     'location_id' => $request->location_id,
@@ -198,13 +201,16 @@ class CustomerDashboardController extends Controller
                     'end_time' => $endTime,
                     'status' => 'scheduled',
                 ]);
+                $lessons[] = $lesson;
             }
         }
 
-        // Send invoice email (simulated)
-        // Mail::send('emails.invoice', ['reservation' => $reservation], function($m) use ($customer) {
-        //     $m->to($customer->email)->subject('Invoice for your kitesurfing lessons');
-        // });
+        // Send reservation confirmation email with payment details
+        try {
+            Mail::send(new ReservationConfirmation($reservation, $lessons));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send reservation confirmation email: ' . $e->getMessage());
+        }
 
         return redirect()->route('customer.dashboard')
             ->with('success', 'Reservering aangemaakt! Wacht op betaalbevestiging. ' . count($filteredDates) . ' les(sen) ingepland.');

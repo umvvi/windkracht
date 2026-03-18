@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Mail\PaymentConfirmation;
+use Illuminate\Support\Facades\Mail;
 
 class Reservation extends Model
 {
@@ -79,5 +81,13 @@ class Reservation extends Model
         $this->payment_date = now();
         $this->status = 'confirmed';
         $this->save();
+
+        // Send payment confirmation email
+        try{
+            $lessons = $this->lessons()->orderBy('start_time')->get();
+            Mail::send(new PaymentConfirmation($this, $lessons));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send payment confirmation email: ' . $e->getMessage());
+        }
     }
 }
