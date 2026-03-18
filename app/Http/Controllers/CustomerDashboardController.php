@@ -138,9 +138,9 @@ class CustomerDashboardController extends Controller
         }
 
         // Check for duplicate or overlapping times (lessons must be at least 3 hours apart)
-        $dateObjectsArray = array_map(function($dateString) {
+        $dateObjectsArray = array_values(array_map(function($dateString) {
             return \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
-        }, $filteredDates);
+        }, $filteredDates));
         
         if (count($dateObjectsArray) < 2) {
             return back()->withInput()->withErrors([
