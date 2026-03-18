@@ -260,7 +260,7 @@
         <div class="nav-container">
             <a href="{{ route('home') }}" class="logo">Windkracht-12</a>
             
-            <ul class="nav-links md:hidden">
+            <ul class="nav-links">
                 <li><a href="{{ route('home') }}">Thuispagina</a></li>
                 <li><a href="{{ route('packages') }}">Pakketten</a></li>
                 <li><a href="{{ route('locations') }}">Locaties</a></li>
