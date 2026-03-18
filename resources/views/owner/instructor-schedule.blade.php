@@ -26,7 +26,7 @@
                         <p style="color: #666; margin: 0;">Pakket: {{ $lesson->reservation->package->name }}</p>
                     </div>
                     <div>
-                        <span style="padding: 0.4rem 0.8rem; background: #f3f4f6; color: #4b5563; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600;">{{ ucfirst($lesson->status) }}</span>
+                        <span style="padding: 0.4rem 0.8rem; background: #f3f4f6; color: #4b5563; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600;">{{ $lesson->status === 'scheduled' ? 'Ingepland' : ($lesson->status === 'cancelled' ? 'Afgebroken' : ucfirst($lesson->status)) }}</span>
                     </div>
                 </div>
             </div>

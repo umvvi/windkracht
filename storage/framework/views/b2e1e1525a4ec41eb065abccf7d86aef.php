@@ -1,23 +1,23 @@
-@extends('layouts.app')
 
-@section('title', 'Reservering Aanvragen - Windkracht-12')
 
-@section('content')
+<?php $__env->startSection('title', 'Reservering Aanvragen - Windkracht-12'); ?>
+
+<?php $__env->startSection('content'); ?>
 <div style="margin-bottom: 3rem;">
     <div style="margin-bottom: 3rem;">
         <h1 style="font-size: 2.5rem; font-weight: 800; color: #003d7a; margin: 0 0 0.5rem 0;">Nieuwe Reservering</h1>
         <p style="color: #666; font-size: 1.05rem; margin: 0;">Kies je pakket, locatie en lesdatum(s)</p>
     </div>
 
-    <form action="{{ route('customer.make-reservation.store') }}" method="POST" id="reservationForm">
-        @csrf
+    <form action="<?php echo e(route('customer.make-reservation.store')); ?>" method="POST" id="reservationForm">
+        <?php echo csrf_field(); ?>
 
         <!-- STEP 1: PACKAGE SELECTION -->
         <div style="margin-bottom: 3rem;">
             <h2 style="font-size: 1.5rem; font-weight: 700; color: #003d7a; margin: 0 0 1.5rem 0;">Stap 1: Kies je Pakket</h2>
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                @foreach ($packages as $package)
+                <?php $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="package-card" style="
                     background: white;
                     border-radius: 0.3rem;
@@ -26,43 +26,50 @@
                     border: 2px solid #e5e7eb;
                     cursor: pointer;
                     transition: all 0.3s;
-                " data-package-id="{{ $package->id }}" data-price="{{ $package->price_per_person }}" data-sessions="{{ $package->num_sessions }}" data-type="{{ $package->type }}">
+                " data-package-id="<?php echo e($package->id); ?>" data-price="<?php echo e($package->price_per_person); ?>" data-sessions="<?php echo e($package->num_sessions); ?>" data-type="<?php echo e($package->type); ?>">
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
                         <div>
-                            <h3 style="font-size: 1.3rem; font-weight: 700; color: #003d7a; margin: 0;">{{ $package->name }}</h3>
-                            <p style="color: #ff6b35; font-weight: 600; margin: 0.25rem 0 0 0;">{{ $package->type === 'private' ? 'Privé' : ($package->type === 'group' ? 'Groep' : ($package->type === 'duo' ? 'Duo' : ucfirst($package->type))) }} Pakket</p>
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: #003d7a; margin: 0;"><?php echo e($package->name); ?></h3>
+                            <p style="color: #ff6b35; font-weight: 600; margin: 0.25rem 0 0 0;"><?php echo e(ucfirst($package->type)); ?> Pakket</p>
                         </div>
                     </div>
                     
                     <div style="display: grid; gap: 0.75rem; margin-bottom: 1.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span style="color: #0369a1; font-weight: 600;">📚</span>
-                            <span style="color: #666;">{{ $package->num_sessions }} sessie(s) {{ $package->type === 'duo' ? '(2 personen)' : '' }}</span>
+                            <span style="color: #666;"><?php echo e($package->num_sessions); ?> sessie(s) <?php echo e($package->type === 'duo' ? '(2 personen)' : ''); ?></span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span style="color: #0369a1; font-weight: 600;">⏱️</span>
-                            <span style="color: #666;">{{ $package->duration_per_session ?? '2 uur' }} per sessie</span>
+                            <span style="color: #666;"><?php echo e($package->duration_per_session ?? '2 uur'); ?> per sessie</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span style="color: #0369a1; font-weight: 600;">👥</span>
-                            <span style="color: #666;">{{ $package->type === 'private' ? 'Privé les' : ($package->type === 'group' ? 'Groepsles' : 'Duo les') }}</span>
+                            <span style="color: #666;"><?php echo e($package->type === 'private' ? 'Privé les' : ($package->type === 'group' ? 'Groepsles' : 'Duo les')); ?></span>
                         </div>
                     </div>
 
                     <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem;">
-                        <p style="color: #666; font-size: 0.9rem; margin: 0 0 1rem 0;">{{ $package->description ?? 'Professionele kitesurfles voor ' . strtolower($package->name) }}</p>
+                        <p style="color: #666; font-size: 0.9rem; margin: 0 0 1rem 0;"><?php echo e($package->description ?? 'Professionele kitesurfles voor ' . strtolower($package->name)); ?></p>
                         <div style="display: flex; align-items: baseline; gap: 0.25rem;">
-                            <span style="font-size: 2rem; font-weight: 800; color: #ff6b35;">€{{ $package->price_per_person }}</span>
-                            <span style="color: #666; font-size: 0.9rem;">{{ $package->type === 'duo' ? 'per persoon' : 'totaal' }}</span>
+                            <span style="font-size: 2rem; font-weight: 800; color: #ff6b35;">€<?php echo e($package->price_per_person); ?></span>
+                            <span style="color: #666; font-size: 0.9rem;"><?php echo e($package->type === 'duo' ? 'per persoon' : 'totaal'); ?></span>
                         </div>
                     </div>
 
-                    <input type="radio" name="package_id" value="{{ $package->id }}" style="display: none;" required>
+                    <input type="radio" name="package_id" value="<?php echo e($package->id); ?>" style="display: none;" required>
                 </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
 
-            @error('package_id') <div style="color: #dc2626; margin-top: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 0.3rem;">{{ $message }}</div> @enderror
+            <?php $__errorArgs = ['package_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <div style="color: #dc2626; margin-top: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 0.3rem;"><?php echo e($message); ?></div> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
         </div>
 
         <!-- STEP 2: LOCATION SELECTION -->
@@ -70,7 +77,7 @@
             <h2 style="font-size: 1.5rem; font-weight: 700; color: #003d7a; margin: 0 0 1.5rem 0;">Stap 2: Kies je Locatie</h2>
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                @foreach ($locations as $location)
+                <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $location): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="location-card" style="
                     background: white;
                     border-radius: 0.3rem;
@@ -79,26 +86,33 @@
                     border: 2px solid #e5e7eb;
                     cursor: pointer;
                     transition: all 0.3s;
-                " data-location-id="{{ $location->id }}">
+                " data-location-id="<?php echo e($location->id); ?>">
                     <div style="
                         height: 200px;
                         background-size: cover;
                         background-position: center;
-                        background-image: url('{{ asset('images/locations/' . strtolower(str_replace(' ', '-', $location->name)) . '.png') }}');
+                        background-image: url('<?php echo e(asset('images/locations/' . strtolower(str_replace(' ', '-', $location->name)) . '.png')); ?>');
                     "></div>
                     
                     <div style="padding: 1.5rem;">
-                        <h3 style="font-size: 1.3rem; font-weight: 700; color: #003d7a; margin: 0 0 0.5rem 0;">{{ $location->name }}</h3>
-                        <p style="color: #ff6b35; font-weight: 600; margin: 0 0 1rem 0; font-size: 0.9rem;">📍 {{ $location->city }}</p>
-                        <p style="color: #666; line-height: 1.5; font-size: 0.95rem; margin: 0;">{{ $location->description ?? 'Geweldige plek voor kitesurfen!' }}</p>
+                        <h3 style="font-size: 1.3rem; font-weight: 700; color: #003d7a; margin: 0 0 0.5rem 0;"><?php echo e($location->name); ?></h3>
+                        <p style="color: #ff6b35; font-weight: 600; margin: 0 0 1rem 0; font-size: 0.9rem;">📍 <?php echo e($location->city); ?></p>
+                        <p style="color: #666; line-height: 1.5; font-size: 0.95rem; margin: 0;"><?php echo e($location->description ?? 'Geweldige plek voor kitesurfen!'); ?></p>
                     </div>
 
-                    <input type="radio" name="location_id" value="{{ $location->id }}" style="display: none;" required>
+                    <input type="radio" name="location_id" value="<?php echo e($location->id); ?>" style="display: none;" required>
                 </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
 
-            @error('location_id') <div style="color: #dc2626; margin-top: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 0.3rem;">{{ $message }}</div> @enderror
+            <?php $__errorArgs = ['location_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <div style="color: #dc2626; margin-top: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 0.3rem;"><?php echo e($message); ?></div> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
         </div>
 
         <!-- STEP 3: DATE SELECTION -->
@@ -109,7 +123,14 @@
                 <p style="color: #666; text-align: center;">Selecteer eerst een pakket om je lesdatum(s) in te plannen</p>
             </div>
 
-            @error('session_dates') <div style="color: #dc2626; margin-top: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 0.3rem;">{{ $message }}</div> @enderror
+            <?php $__errorArgs = ['session_dates'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <div style="color: #dc2626; margin-top: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 0.3rem;"><?php echo e($message); ?></div> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
         </div>
 
         <!-- COST SUMMARY -->
@@ -341,4 +362,6 @@ document.getElementById('reservationForm').addEventListener('submit', function(e
     submitBtn.textContent = 'Bezig met plaatsen...';
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Comunicación\Desktop\school\resources\views/customer/make-reservation.blade.php ENDPATH**/ ?>

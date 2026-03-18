@@ -26,7 +26,7 @@
                 <div style="background: #f9fafb; padding: 1rem; border-radius: 0.3rem; margin-bottom: 1.5rem; font-size: 0.9rem;">
                     <div style="margin-bottom: 0.5rem;"><span style="color: #6b7280;">Duur:</span> <strong style="color: #003d7a;">{{ $package->formatted_duration }} per les</strong></div>
                     <div style="margin-bottom: 0.5rem;"><span style="color: #6b7280;">Aantal:</span> <strong style="color: #003d7a;">{{ $package->num_sessions }} lessen</strong></div>
-                    <div><span style="color: #6b7280;">Type:</span> <strong style="color: #003d7a;">{{ ucfirst($package->type) }}</strong></div>
+                    <div><span style="color: #6b7280;">Type:</span> <strong style="color: #003d7a;">{{ $package->type === 'private' ? 'Privé' : ($package->type === 'group' ? 'Groep' : ($package->type === 'duo' ? 'Duo' : ucfirst($package->type))) }}</strong></div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">

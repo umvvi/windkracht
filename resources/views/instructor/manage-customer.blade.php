@@ -34,7 +34,7 @@
                             <tr style="border-bottom: 1px solid #e5e7eb;">
                                 <td style="padding: 1rem; color: #1f2937;">{{ $lesson->start_time->format('d-m-Y H:i') }}</td>
                                 <td style="padding: 1rem; color: #1f2937;">{{ $lesson->location->name }}</td>
-                                <td style="padding: 1rem; color: #1f2937;"><span style="padding: 0.4rem 0.8rem; background: #d1fae5; color: #065f46; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600;">{{ ucfirst($lesson->status) }}</span></td>
+                                <td style="padding: 1rem; color: #1f2937;"><span style="padding: 0.4rem 0.8rem; background: #d1fae5; color: #065f46; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600;">{{ $lesson->status === 'scheduled' ? 'Ingepland' : ($lesson->status === 'cancelled' ? 'Afgebroken' : ucfirst($lesson->status)) }}</span></td>
                             </tr>
                             @endforeach
                         </tbody>

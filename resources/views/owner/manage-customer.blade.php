@@ -46,7 +46,7 @@
                                             <p style="color: #666; margin: 0.25rem 0 0 0; font-size: 0.85rem;">👤 {{ $lesson->instructor->personalInformation?->full_name ?? 'Unknown' }}</p>
                                         </div>
                                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                            <span style="padding: 0.2rem 0.5rem; border-radius: 0.3rem; background: {{ $lesson->status === 'scheduled' ? '#dbeafe' : '#fee2e2' }}; color: {{ $lesson->status === 'scheduled' ? '#0c4a6e' : '#7f1d1d' }}; font-size: 0.8rem; font-weight: 600;">{{ ucfirst($lesson->status) }}</span>
+                                            <span style="padding: 0.2rem 0.5rem; border-radius: 0.3rem; background: {{ $lesson->status === 'scheduled' ? '#dbeafe' : '#fee2e2' }}; color: {{ $lesson->status === 'scheduled' ? '#0c4a6e' : '#7f1d1d' }}; font-size: 0.8rem; font-weight: 600;">{{ $lesson->status === 'scheduled' ? 'Ingepland' : ($lesson->status === 'cancelled' ? 'Afgebroken' : ucfirst($lesson->status)) }}</span>
                                             @if ($lesson->status === 'scheduled')
                                             <form action="{{ route('owner.cancel-lesson', $lesson->id) }}" method="POST" style="display: inline;">
                                                 @csrf
