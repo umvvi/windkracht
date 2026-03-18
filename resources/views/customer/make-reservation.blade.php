@@ -120,13 +120,17 @@
                     <p style="font-size: 2rem; font-weight: 800; color: #003d7a; margin: 0;">€<span id="total-cost">0.00</span></p>
                     <p style="color: #6b7280; font-size: 0.85rem; margin: 0.5rem 0 0 0;">Factuur verstuurd naar je e-mail</p>
                 </div>
-                <button type="submit" style="background: #ff6b35; color: white; padding: 1rem 2rem; border: none; border-radius: 0.3rem; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ff5520'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#ff6b35'; this.style.transform='translateY(0)'">
+                <button type="submit" id="submitBtn" style="background: #ff6b35; color: white; padding: 1rem 2rem; border: none; border-radius: 0.3rem; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ff5520'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#ff6b35'; this.style.transform='translateY(0)'">
                     Reservering Plaatsen
                 </button>
             </div>
         </div>
     </form>
 </div>
+
+<!-- Add Flatpickr CSS for better date picker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <style>
 .package-card:hover,
@@ -158,6 +162,34 @@
     justify-content: center;
     font-weight: bold;
     font-size: 1.2rem;
+}
+
+/* Flatpickr styling */
+.flatpickr-input {
+    width: 100% !important;
+}
+
+.flatpickr-calendar {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    border-radius: 0.5rem !important;
+}
+
+.flatpickr-day.selected {
+    background: #ff6b35 !important;
+    color: white !important;
+}
+
+.flatpickr-day.today {
+    border-color: #0369a1 !important;
+}
+
+.flatpickr-months .flatpickr-month {
+    background: white !important;
+}
+
+.flatpickr-current-month input.cur-year {
+    color: #003d7a !important;
+    font-weight: 700 !important;
 }
 </style>
 
@@ -204,17 +236,48 @@ function updateDateInputs() {
     let html = '<label style="display: block; color: #003d7a; font-weight: 700; margin-bottom: 1rem;">Selecteer ' + sessions + ' sessie(s)</label>';
     html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">';
     
+    // Get minimum date (24 hours from now)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+    
     for (let i = 1; i <= sessions; i++) {
+        const inputId = 'session-date-' + i;
         html += `
             <div>
                 <label style="display: block; color: #666; font-weight: 600; margin-bottom: 0.5rem;">Sessie ${i} Datum & Tijd</label>
-                <input type="datetime-local" name="session_dates[${i}]" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.3rem; font-size: 0.95rem;" required>
+                <input type="datetime-local" id="${inputId}" name="session_dates[${i}]" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.3rem; font-size: 0.95rem; font-family: 'Inter', sans-serif;" required min="${minDate}T00:00">
             </div>
         `;
     }
     
     html += '</div>';
     document.getElementById('session-dates-container').innerHTML = html;
+    
+    // Initialize Flatpickr on new inputs
+    for (let i = 1; i <= sessions; i++) {
+        const inputId = 'session-date-' + i;
+        flatpickr('#' + inputId, {
+            enableTime: true,
+            dateFormat: "Y-m-d\\TH:i",
+            minDate: minDate,
+            minTime: "08:00",
+            maxTime: "18:00",
+            time_24hr: true,
+            minuteIncrement: 15,
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'],
+                    longhand: ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'],
+                    longhand: ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
+                }
+            }
+        });
+    }
 }
 
 function updateTotalCost() {
@@ -235,13 +298,28 @@ function updateTotalCost() {
     document.getElementById('total-cost').textContent = totalCost.toFixed(2);
 }
 
-// Form submission validation
+// Prevent double submission
+let isSubmitting = false;
 document.getElementById('reservationForm').addEventListener('submit', function(e) {
     if (!document.querySelector('input[name="package_id"]:checked') ||
         !document.querySelector('input[name="location_id"]:checked')) {
         e.preventDefault();
         alert('Selecteer alstublieft een pakket en locatie.');
+        return;
     }
+    
+    if (isSubmitting) {
+        e.preventDefault();
+        return;
+    }
+    
+    // Disable button and show loading state
+    isSubmitting = true;
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.6';
+    submitBtn.style.cursor = 'not-allowed';
+    submitBtn.textContent = 'Bezig met plaatsen...';
 });
 </script>
 @endsection

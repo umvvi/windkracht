@@ -90,10 +90,31 @@ class CustomerDashboardController extends Controller
             'package_id' => 'required|exists:packages,id',
             'location_id' => 'required|exists:locations,id',
             'session_dates' => 'required|array|min:1',
+            'session_dates.*' => 'required|date_format:Y-m-d\TH:i|after_or_equal:now',
         ]);
 
         $package = Package::find($request->package_id);
         $customer = Auth::user();
+
+        // Validate all dates are in the future
+        $now = \Carbon\Carbon::now();
+        foreach ($request->session_dates as $dateString) {
+            if (!$dateString) continue;
+            
+            $date = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
+            
+            if ($date->isPast()) {
+                return back()->withInput()->withErrors([
+                    'session_dates' => 'Alle lesdatum(s) moeten in de toekomst liggen.'
+                ]);
+            }
+            
+            if ($date->isBefore($now->addHours(24))) {
+                return back()->withInput()->withErrors([
+                    'session_dates' => 'Lessen moeten minstens 24 uur van tevoren worden geboekt.'
+                ]);
+            }
+        }
 
         // Create reservation
         $reservation = Reservation::create([
