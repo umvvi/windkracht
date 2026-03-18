@@ -7,6 +7,7 @@ use App\Models\PersonalInformation;
 use App\Models\Package;
 use App\Models\Reservation;
 use App\Models\Location;
+use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -95,6 +96,7 @@ class CustomerDashboardController extends Controller
 
         $package = Package::find($request->package_id);
         $customer = Auth::user();
+        $location = Location::find($request->location_id);
 
         // Validate all dates are in the future
         $now = \Carbon\Carbon::now();
@@ -122,8 +124,35 @@ class CustomerDashboardController extends Controller
             'package_id' => $package->id,
             'location_id' => $request->location_id,
             'total_price' => $package->price_per_person * ($package->type === 'duo' ? 2 : 1),
-            'status' => 'pending_payment',
+            'status' => 'confirmed',
         ]);
+
+        // Create lessons for each session date
+        $availableInstructors = User::where('role', 'instructor')->where('is_active', true)->get();
+        $lessonDuration = 2; // Default 2 hours per lesson
+
+        foreach ($request->session_dates as $dateString) {
+            if (!$dateString) continue;
+
+            $startTime = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
+            $endTime = $startTime->copy()->addHours($lessonDuration);
+
+            // Assign a random instructor from available instructors
+            $instructor = $availableInstructors->isNotEmpty() 
+                ? $availableInstructors->random() 
+                : User::where('role', 'instructor')->first();
+
+            if ($instructor) {
+                \App\Models\Lesson::create([
+                    'reservation_id' => $reservation->id,
+                    'instructor_id' => $instructor->id,
+                    'location_id' => $request->location_id,
+                    'start_time' => $startTime,
+                    'end_time' => $endTime,
+                    'status' => 'scheduled',
+                ]);
+            }
+        }
 
         // Send invoice email (simulated)
         // Mail::send('emails.invoice', ['reservation' => $reservation], function($m) use ($customer) {
@@ -131,7 +160,7 @@ class CustomerDashboardController extends Controller
         // });
 
         return redirect()->route('customer.dashboard')
-            ->with('success', 'Reservation created! An invoice has been sent to your email.');
+            ->with('success', 'Reservation created with ' . count(array_filter($request->session_dates)) . ' lesson(s)! An invoice has been sent to your email.');
     }
 
     /**
