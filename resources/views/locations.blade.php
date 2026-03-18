@@ -20,8 +20,10 @@
             transition: all 0.3s;
         " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'">
             <div style="
-                height: 180px;
-                background: linear-gradient(135deg, #668fb4 0%, #5a7fa3 100%);
+                height: 200px;
+                background-size: cover;
+                background-position: center;
+                background-image: url('{{ asset('images/locations/' . strtolower(str_replace(' ', '-', $location->name)) . '.png') }}');
                 display: flex;
                 align-items: flex-end;
                 justify-content: center;
@@ -29,7 +31,6 @@
                 padding: 2rem;
                 text-align: center;
             ">
-                <!-- IMAGE PLACEHOLDER -->
             </div>
             <div style="padding: 1.5rem;">
                 <h2 style="font-size: 1.3rem; font-weight: 700; color: #003d7a; margin: 0 0 0.5rem 0;">{{ $location->name }}</h2>
