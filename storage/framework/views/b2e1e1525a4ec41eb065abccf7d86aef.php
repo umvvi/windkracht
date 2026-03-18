@@ -30,7 +30,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
                         <div>
                             <h3 style="font-size: 1.3rem; font-weight: 700; color: #003d7a; margin: 0;"><?php echo e($package->name); ?></h3>
-                            <p style="color: #ff6b35; font-weight: 600; margin: 0.25rem 0 0 0;"><?php echo e(ucfirst($package->type)); ?> Pakket</p>
+                            <p style="color: #ff6b35; font-weight: 600; margin: 0.25rem 0 0 0;"><?php echo e($package->type === 'private' ? 'Privé' : ($package->type === 'group' ? 'Groep' : ($package->type === 'duo' ? 'Duo' : ucfirst($package->type)))); ?> Pakket</p>
                         </div>
                     </div>
                     

@@ -78,10 +78,10 @@
                                     border-radius: 0.3rem;
                                     font-size: 0.85rem;
                                     font-weight: 600;
-                                    background: <?php echo e($reservation->status === 'confirmed' ? '#d1fae5' : '#fef3c7'); ?>;
-                                    color: <?php echo e($reservation->status === 'confirmed' ? '#065f46' : '#78350f'); ?>;
+                                    background: <?php echo e(!$reservation->payment_received ? '#fef3c7' : '#d1fae5'); ?>;
+                                    color: <?php echo e(!$reservation->payment_received ? '#92400e' : '#065f46'); ?>;
                                 ">
-                                    <?php echo e(ucfirst($reservation->status)); ?>
+                                    <?php echo e(!$reservation->payment_received ? 'Wachtend op Betaling' : 'Bevestigd'); ?>
 
                                 </span>
                             </td>

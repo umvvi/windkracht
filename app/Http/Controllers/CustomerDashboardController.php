@@ -102,8 +102,27 @@ class CustomerDashboardController extends Controller
         $now = \Carbon\Carbon::now();
         $filteredDates = array_filter($request->session_dates);
         
+        // Validate we have the correct number of dates
+        if (count($filteredDates) == 0) {
+            return back()->withInput()->withErrors([
+                'session_dates' => 'Selecteer ten minste één lesdatum.'
+            ]);
+        }
+        
+        if (count($filteredDates) != $package->sessions) {
+            return back()->withInput()->withErrors([
+                'session_dates' => 'U moet exact ' . $package->sessions . ' sessie(s) selecteren voor dit pakket.'
+            ]);
+        }
+        
         foreach ($filteredDates as $dateString) {
-            $date = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
+            try {
+                $date = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
+            } catch (\Exception $e) {
+                return back()->withInput()->withErrors([
+                    'session_dates' => 'Ongeldige datumnotatie. Gebruik format: JJJJ-MM-DD HH:MM.'
+                ]);
+            }
             
             if ($date->isPast()) {
                 return back()->withInput()->withErrors([
@@ -122,10 +141,22 @@ class CustomerDashboardController extends Controller
         $dateObjectsArray = array_map(function($dateString) {
             return \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $dateString);
         }, $filteredDates);
+        
+        if (count($dateObjectsArray) < 2) {
+            return back()->withInput()->withErrors([
+                'session_dates' => 'Selecteer ten minste twee verschillende datums.'
+            ]);
+        }
 
         for ($i = 0; $i < count($dateObjectsArray); $i++) {
             for ($j = $i + 1; $j < count($dateObjectsArray); $j++) {
                 $diff = abs($dateObjectsArray[$i]->diffInHours($dateObjectsArray[$j]));
+                
+                if ($diff == 0) {
+                    return back()->withInput()->withErrors([
+                        'session_dates' => 'U kunt niet dezelfde datum twee keer selecteren.'
+                    ]);
+                }
                 
                 if ($diff < 3) {
                     return back()->withInput()->withErrors([
