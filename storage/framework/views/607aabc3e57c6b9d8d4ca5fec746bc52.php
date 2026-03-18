@@ -15,7 +15,27 @@
             <p style="margin: 0.5rem 0; color: #4b5563;"><strong>Email:</strong> <?php echo e($customer->email); ?></p>
             <p style="margin: 0.5rem 0; color: #4b5563;"><strong>Telefoon:</strong> <?php echo e($customer->personalInformation?->phone_mobile ?? 'N/A'); ?></p>
             <p style="margin: 0.5rem 0; color: #4b5563;"><strong>Plaats:</strong> <?php echo e($customer->personalInformation?->city ?? 'N/A'); ?></p>
-            <p style="margin: 0; color: #4b5563;"><strong>Status:</strong> <span style="padding: 0.2rem 0.6rem; border-radius: 0.3rem; background: <?php echo e($customer->is_active ? '#d1fae5' : '#fee2e2'); ?>; color: <?php echo e($customer->is_active ? '#065f46' : '#7f1d1d'); ?>; font-size: 0.85rem; font-weight: 600;"><?php echo e($customer->is_active ? 'Actief' : 'Geblokkeerd'); ?></span></p>
+            <p style="margin: 0.5rem 0; color: #4b5563;"><strong>Status:</strong> <span style="padding: 0.2rem 0.6rem; border-radius: 0.3rem; background: <?php echo e($customer->is_active ? '#d1fae5' : '#fee2e2'); ?>; color: <?php echo e($customer->is_active ? '#065f46' : '#7f1d1d'); ?>; font-size: 0.85rem; font-weight: 600;"><?php echo e($customer->is_active ? 'Actief' : 'Geblokkeerd'); ?></span></p>
+            <p style="margin: 1rem 0 0 0; padding-top: 1rem; border-top: 1px solid #e5e7eb; color: #4b5563;"><strong>Gebruikersrol:</strong> <span style="padding: 0.2rem 0.6rem; border-radius: 0.3rem; background: <?php echo e($customer->role === 'instructor' ? '#dbeafe' : '#f3f4f6'); ?>; color: <?php echo e($customer->role === 'instructor' ? '#0c4a6e' : '#374151'); ?>; font-size: 0.85rem; font-weight: 600;"><?php echo e(ucfirst($customer->role)); ?></span></p>
+        </div>
+
+        <div style="background: white; border-radius: 0.3rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 2rem; border-left: 4px solid #ff6b35;">
+            <h2 style="font-size: 1.3rem; font-weight: 700; color: #003d7a; margin: 0 0 1rem 0;">Rol Wijzigen</h2>
+            <p style="margin: 0 0 1rem 0; color: #666; font-size: 0.95rem;">Wijzig de gebruikersrol van deze persoon.</p>
+            <form action="<?php echo e(route('owner.change-role', $customer->id)); ?>" method="POST" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <?php echo csrf_field(); ?>
+                <div style="flex: 1;">
+                    <label style="display: block; font-weight: 600; color: #003d7a; margin-bottom: 0.5rem; font-size: 0.9rem;">Nieuwe Rol</label>
+                    <select name="role" style="width: 100%; padding: 0.6rem; border: 1px solid #d1d5db; border-radius: 0.3rem; font-size: 0.95rem; font-family: inherit;" required>
+                        <option value="customer" <?php echo e($customer->role === 'customer' ? 'selected' : ''); ?>>Klant (Customer)</option>
+                        <option value="instructor" <?php echo e($customer->role === 'instructor' ? 'selected' : ''); ?>>Instructeur (Instructor)</option>
+                        <option value="owner" <?php echo e($customer->role === 'owner' ? 'selected' : ''); ?>>Eigenaar (Owner)</option>
+                    </select>
+                </div>
+                <button type="submit" style="background: #0369a1; color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 0.3rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#0370a9'" onmouseout="this.style.background='#0369a1'">
+                    Wijzigen
+                </button>
+            </form>
         </div>
 
         <div style="background: white; border-radius: 0.3rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 2rem; border-left: 4px solid #ff6b35; grid-column: 1 / -1;">

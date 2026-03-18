@@ -27,10 +27,24 @@
                     </div>
                     <div>
                         @if ($lesson->status === 'scheduled')
-                        <form action="{{ route('instructor.cancel-lesson', $lesson->id) }}" method="POST" style="display: inline;">
-                            @csrf
-                            <button type="submit" style="color: #dc2626; background: none; border: none; cursor: pointer; text-decoration: underline; font-weight: 600;">Les Afzeggen</button>
-                        </form>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <form action="{{ route('instructor.cancel-lesson', $lesson->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                <input type="hidden" name="type" value="instructor_illness">
+                                <input type="hidden" name="reason" value="Ziekte instructeur">
+                                <button type="submit" style="background: #f97316; color: white; border: none; padding: 0.4rem 0.75rem; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ea580c'" onmouseout="this.style.background='#f97316'" onclick="return confirm('Les afzeggen wegens ziekte?')">
+                                    Ziekte
+                                </button>
+                            </form>
+                            <form action="{{ route('instructor.cancel-lesson', $lesson->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                <input type="hidden" name="type" value="bad_weather">
+                                <input type="hidden" name="reason" value="Slechte weersomstandigheden">
+                                <button type="submit" style="background: #06b6d4; color: white; border: none; padding: 0.4rem 0.75rem; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#0891b2'" onmouseout="this.style.background='#06b6d4'" onclick="return confirm('Les afzeggen wegens slechte weer?')">
+                                    Weer
+                                </button>
+                            </form>
+                        </div>
                         @else
                         <span style="padding: 0.4rem 0.8rem; background: #f3f4f6; color: #4b5563; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600;">{{ $lesson->status === 'scheduled' ? 'Ingepland' : ($lesson->status === 'cancelled' ? 'Afgebroken' : ucfirst($lesson->status)) }}</span>
                         @endif

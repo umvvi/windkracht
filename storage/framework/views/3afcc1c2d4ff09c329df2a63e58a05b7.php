@@ -30,11 +30,18 @@
                             <span style="padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.85rem; font-weight: 600; background: <?php echo e($customer->is_active ? '#d1fae5' : '#fee2e2'); ?>; color: <?php echo e($customer->is_active ? '#065f46' : '#7f1d1d'); ?>;"><?php echo e($customer->is_active ? 'Actief' : 'Geblokkeerd'); ?></span>
                         </td>
                         <td style="padding: 1rem;">
-                            <a href="<?php echo e(route('owner.manage-customer', $customer->id)); ?>" style="color: #0369a1; text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-right: 1rem;">Bekijken</a>
-                            <form action="<?php echo e(route('owner.toggle-status', $customer->id)); ?>" method="POST" style="display: inline;">
-                                <?php echo csrf_field(); ?>
-                                <button type="submit" style="color: #ff6b35; background: none; border: none; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 0.9rem;"><?php echo e($customer->is_active ? 'Blokkeren' : 'Activeren'); ?></button>
-                            </form>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                                <a href="<?php echo e(route('owner.manage-customer', $customer->id)); ?>" style="color: #0369a1; text-decoration: none; font-weight: 600; font-size: 0.9rem;">Bekijken</a>
+                                <form action="<?php echo e(route('owner.toggle-status', $customer->id)); ?>" method="POST" style="display: inline;">
+                                    <?php echo csrf_field(); ?>
+                                    <button type="submit" style="color: #ff6b35; background: none; border: none; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 0.9rem;"><?php echo e($customer->is_active ? 'Blokkeren' : 'Activeren'); ?></button>
+                                </form>
+                                <form action="<?php echo e(route('owner.change-role', $customer->id)); ?>" method="POST" style="display: inline;">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="role" value="instructor">
+                                    <button type="submit" style="color: #22c55e; background: none; border: none; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 0.9rem;" onclick="return confirm('Deze klant als instructeur instellen?')">→ Instructeur</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
