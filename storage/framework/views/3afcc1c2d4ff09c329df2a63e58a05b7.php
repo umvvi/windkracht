@@ -36,11 +36,24 @@
                                     <?php echo csrf_field(); ?>
                                     <button type="submit" style="color: #ff6b35; background: none; border: none; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 0.9rem;"><?php echo e($customer->is_active ? 'Blokkeren' : 'Activeren'); ?></button>
                                 </form>
+                                <?php
+                                    $profileComplete = $customer->personalInformation && 
+                                                     !empty($customer->personalInformation->first_name) &&
+                                                     !empty($customer->personalInformation->last_name) &&
+                                                     !empty($customer->personalInformation->street_address) &&
+                                                     !empty($customer->personalInformation->city) &&
+                                                     !empty($customer->personalInformation->phone_mobile) &&
+                                                     !empty($customer->personalInformation->bsn);
+                                ?>
+                                <?php if($profileComplete): ?>
                                 <form action="<?php echo e(route('owner.change-role', $customer->id)); ?>" method="POST" style="display: inline;">
                                     <?php echo csrf_field(); ?>
                                     <input type="hidden" name="role" value="instructor">
                                     <button type="submit" style="color: #22c55e; background: none; border: none; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 0.9rem;" onclick="return confirm('Deze klant als instructeur instellen?')">→ Instructeur</button>
                                 </form>
+                                <?php else: ?>
+                                <span style="color: #9ca3af; font-weight: 600; font-size: 0.9rem; cursor: not-allowed;" title="Profiel onvolledig - zorg dat BSN is ingevuld">→ Instructeur</span>
+                                <?php endif; ?>
                             </div>
                         </td>
                     </tr>

@@ -45,7 +45,7 @@ class InstructorDashboardController extends Controller
             'last_name' => 'required|string|max:50',
             'street_address' => 'required|string|max:100',
             'city' => 'required|string|max:50',
-            'postal_code' => 'nullable|regex:/^\d{4}[A-Z]{2}$/i',
+            'postal_code' => 'nullable|regex:/^\d{4}[a-zA-Z]{2}$/',
             'date_of_birth' => 'nullable|date|before:today',
             'phone_mobile' => 'required|regex:/^(\+31|0)[1-9]\d{1,9}$/',
             'bsn' => 'nullable|regex:/^\d{9}$/',
