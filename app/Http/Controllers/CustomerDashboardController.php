@@ -316,12 +316,37 @@ class CustomerDashboardController extends Controller
      */
     public function rescheduleLesson(Request $request, $lessonId)
     {
-        $request->validate([
-            'new_date' => 'required|date_format:Y-m-d\TH:i|after_or_equal:now',
-        ], [
-            'new_date.required' => 'Selecteer een nieuwe datum.',
-            'new_date.after_or_equal' => 'Kies een datum in de toekomst.',
-        ]);
+        // Use try-catch to handle date parsing issues
+        try {
+            $newDateString = $request->input('new_date');
+            
+            if (empty($newDateString)) {
+                return back()->with('error', 'Selecteer een geldige datum en tijd.');
+            }
+
+            // Try parsing the date from Flatpickr format (Y-m-d\TH:i or Y-m-d H:i)
+            $newDate = null;
+            if (strpos($newDateString, 'T') !== false) {
+                // Format: 2026-03-24T15:30
+                $newDate = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $newDateString);
+            } else {
+                // Try alternative format
+                $newDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $newDateString);
+            }
+
+            // Check if date is in the future
+            if ($newDate->isPast()) {
+                return back()->with('error', 'De gekozen datum moet in de toekomst liggen.');
+            }
+
+            // Check if date is at least 24 hours away
+            if ($newDate->diffInHours(\Carbon\Carbon::now()) < 24) {
+                return back()->with('error', 'Lessen moeten minstens 24 uur van tevoren geboekt worden.');
+            }
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Ongeldig datumformat. Gebruik het datumkiezer formulier.');
+        }
 
         $lesson = \App\Models\Lesson::findOrFail($lessonId);
         $reservation = $lesson->reservation;
@@ -334,8 +359,7 @@ class CustomerDashboardController extends Controller
             return back()->with('error', 'Alleen geannuleerde lessen kunnen opnieuw worden ingepland.');
         }
 
-        // Get new date
-        $newDate = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $request->new_date);
+        // Calculate end time based on lesson duration
         $lessonDuration = 2.5;
         $endTime = $newDate->copy()->addHours($lessonDuration);
 
