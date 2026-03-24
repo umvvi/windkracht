@@ -24,7 +24,7 @@
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
                             <div>
                                 <p style="color: #6b7280; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin: 0 0 0.5rem 0;">KLANT</p>
-                                <p style="font-size: 1.1rem; font-weight: 700; color: #003d7a; margin: 0;">{{ $lesson->reservation->customer->personalInformation?->full_name ?? 'Unknown' }}</p>
+                                <p style="font-size: 1.1rem; font-weight: 700; color: #003d7a; margin: 0;">{{ $lesson->reservation->customer->personalInformation?->full_name ?? 'Onbekend' }}</p>
                             </div>
                             <div>
                                 <p style="color: #6b7280; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin: 0 0 0.5rem 0;">LES DATUM</p>
@@ -36,7 +36,7 @@
                             </div>
                             <div>
                                 <p style="color: #6b7280; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin: 0 0 0.5rem 0;">INSTRUCTEUR</p>
-                                <p style="font-size: 1.1rem; font-weight: 700; color: #003d7a; margin: 0;">{{ $lesson->instructor->personalInformation?->full_name ?? 'Unknown' }}</p>
+                                <p style="font-size: 1.1rem; font-weight: 700; color: #003d7a; margin: 0;">{{ $lesson->instructor->personalInformation?->full_name ?? 'Onbekend' }}</p>
                             </div>
                         </div>
 

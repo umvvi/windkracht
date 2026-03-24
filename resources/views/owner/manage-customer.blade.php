@@ -76,7 +76,7 @@
                                     <div style="background: #f9fafb; padding: 0.75rem; border-radius: 0.3rem; display: flex; justify-content: space-between; align-items: center;">
                                         <div>
                                             <p style="font-weight: 600; color: #003d7a; margin: 0; font-size: 0.95rem;">📅 {{ $lesson->start_time->format('d-m-Y H:i') }}</p>
-                                            <p style="color: #666; margin: 0.25rem 0 0 0; font-size: 0.85rem;">👤 {{ $lesson->instructor->personalInformation?->full_name ?? 'Unknown' }}</p>
+                                            <p style="color: #666; margin: 0.25rem 0 0 0; font-size: 0.85rem;">👤 {{ $lesson->instructor->personalInformation?->full_name ?? 'Onbekend' }}</p>
                                         </div>
                                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                                             <span style="padding: 0.2rem 0.5rem; border-radius: 0.3rem; background: {{ $lesson->status === 'scheduled' ? '#dbeafe' : '#fee2e2' }}; color: {{ $lesson->status === 'scheduled' ? '#0c4a6e' : '#7f1d1d' }}; font-size: 0.8rem; font-weight: 600;">{{ $lesson->status === 'scheduled' ? 'Ingepland' : ($lesson->status === 'cancelled' ? 'Afgebroken' : ucfirst($lesson->status)) }}</span>

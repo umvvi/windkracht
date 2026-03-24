@@ -30,6 +30,7 @@
             line-height: 1.6;
             color: #1f2937;
             background: #f9fafb;
+            overflow-x: hidden;
         }
         
         h1, h2, h3, h4, h5, h6 {

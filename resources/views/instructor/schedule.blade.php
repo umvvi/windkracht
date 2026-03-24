@@ -22,7 +22,7 @@
                     <div>
                         <p style="font-size: 1.1rem; font-weight: 700; color: #003d7a; margin: 0 0 0.5rem 0;">{{ $lesson->start_time->format('d-m-Y H:i') }} - {{ $lesson->end_time->format('H:i') }}</p>
                         <p style="color: #666; margin: 0.25rem 0;">Locatie: {{ $lesson->location->name }}</p>
-                        <p style="color: #666; margin: 0.25rem 0;">Klant: {{ $lesson->reservation->customer->personalInformation?->full_name ?? 'Unknown' }}</p>
+                        <p style="color: #666; margin: 0.25rem 0;">Klant: {{ $lesson->reservation->customer->personalInformation?->full_name ?? 'Onbekend' }}</p>
                         <p style="color: #666; margin: 0;">Pakket: {{ $lesson->reservation->package->name }}</p>
                     </div>
                     <div>

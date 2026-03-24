@@ -8,7 +8,7 @@
     position: relative;
     height: 700px;
     background: linear-gradient(rgba(3, 105, 161, 0.4), rgba(14, 165, 233, 0.4)),
-                url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1400&h=700&fit=crop') center/cover;
+                url('{{ asset('images/hero.png') }}') center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -109,8 +109,8 @@
         <div style="height: 2px; width: 50px; background: #ff6b35; margin: 0.5rem auto 0;"></div>
     </div>
     
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-        <!-- Program Card 1 -->
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; max-width: 900px; margin: 0 auto;">
+        <!-- Program Card 1: BEGINNER -->
         <div style="
             background: white;
             border-radius: 0.3rem;
@@ -119,18 +119,7 @@
             transition: all 0.3s;
             border: 1px solid #e5e7eb;
         " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'">
-            <div style="
-                height: 180px;
-                background: linear-gradient(135deg, #668fb4 0%, #5a7fa3 100%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 2.5rem;
-                font-weight: bold;
-            ">
-                <!-- IMAGE PLACEHOLDER 1 -->
-            </div>
+            <img src="{{ asset('images/beginner.png') }}" alt="Beginner Kitesurfing" style="width: 100%; height: 180px; object-fit: cover; display: block;">
             <div style="padding: 1.5rem;">
                 <span style="
                     display: inline-block;
@@ -165,7 +154,7 @@
             </div>
         </div>
 
-        <!-- Program Card 2 -->
+        <!-- Program Card 2: ADVANCED -->
         <div style="
             background: white;
             border-radius: 0.3rem;
@@ -174,18 +163,7 @@
             transition: all 0.3s;
             border: 1px solid #e5e7eb;
         " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'">
-            <div style="
-                height: 180px;
-                background: linear-gradient(135deg, #8b5a8f 0%, #7a4f7f 100%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 2.5rem;
-                font-weight: bold;
-            ">
-                <!-- IMAGE PLACEHOLDER 2 -->
-            </div>
+            <img src="{{ asset('images/advanced.png') }}" alt="Advanced Kitesurfing" style="width: 100%; height: 180px; object-fit: cover; display: block;">
             <div style="padding: 1.5rem;">
                 <span style="
                     display: inline-block;
@@ -219,61 +197,8 @@
                 </a>
             </div>
         </div>
+    </div>
 
-        <!-- Program Card 3 -->
-        <div style="
-            background: white;
-            border-radius: 0.3rem;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-            border: 1px solid #e5e7eb;
-        " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'">
-            <div style="
-                height: 180px;
-                background: linear-gradient(135deg, #5a8ca8 0%, #4d7c98 100%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 2.5rem;
-                font-weight: bold;
-            ">
-                <!-- IMAGE PLACEHOLDER 3 -->
-            </div>
-            <div style="padding: 1.5rem;">
-                <span style="
-                    display: inline-block;
-                    background: #e8f4f8;
-                    color: #003d7a;
-                    padding: 0.4rem 0.8rem;
-                    border-radius: 0.2rem;
-                    font-size: 0.75rem;
-                    font-weight: 700;
-                    margin-bottom: 1rem;
-                    text-transform: uppercase;
-                ">VERHUURPAKKET</span>
-                <h3 style="font-size: 1.2rem; font-weight: 700; color: #003d7a; margin: 0 0 0.5rem 0;">Premium Apparatuur</h3>
-                <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.5;">
-                    Huur topkwaliteit vliegers, boards en neopreen van de beste merken.
-                </p>
-                <p style="color: #ff6b35; font-weight: 700; margin-bottom: 1rem;">Vanaf €85/dag</p>
-                <a href="{{ route('packages') }}" style="
-                    display: block;
-                    text-align: center;
-                    border: 1px solid #d1d5db;
-                    color: #003d7a;
-                    padding: 0.7rem;
-                    border-radius: 0.3rem;
-                    font-weight: 600;
-                    text-decoration: none;
-                    transition: all 0.3s;
-                    font-size: 0.9rem;
-                " onmouseover="this.style.background='#f9fafb'; this.style.borderColor='#003d7a'" onmouseout="this.style.background='transparent'; this.style.borderColor='#d1d5db'">
-                    Details
-                </a>
-            </div>
-        </div>
     </div>
 </div>
 
