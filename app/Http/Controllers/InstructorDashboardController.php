@@ -41,14 +41,19 @@ class InstructorDashboardController extends Controller
     public function updatePersonalInfo(Request $request)
     {
         $request->validate([
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'street_address' => 'required|string',
-            'city' => 'required|string',
-            'postal_code' => 'nullable|string',
-            'date_of_birth' => 'nullable|date',
-            'phone_mobile' => 'required|string',
-            'bsn' => 'nullable|string',
+            'first_name' => 'required|string|max:50',
+            'last_name' => 'required|string|max:50',
+            'street_address' => 'required|string|max:100',
+            'city' => 'required|string|max:50',
+            'postal_code' => 'nullable|regex:/^\d{4}[A-Z]{2}$/i',
+            'date_of_birth' => 'nullable|date|before:today',
+            'phone_mobile' => 'required|regex:/^(\+31|0)[1-9]\d{1,9}$/',
+            'bsn' => 'nullable|regex:/^\d{9}$/',
+        ], [
+            'postal_code.regex' => 'Postcode moet het formaat XXXXAB hebben (4 cijfers en 2 letters), bijvoorbeeld 1234AB.',
+            'phone_mobile.regex' => 'Telefoonnummer moet een geldig Nederlands nummer zijn (06... of +31...).',
+            'date_of_birth.before' => 'Geboortedatum kan niet in de toekomst liggen.',
+            'bsn.regex' => 'BSN moet uit 9 cijfers bestaan.',
         ]);
 
         $user = Auth::user();
