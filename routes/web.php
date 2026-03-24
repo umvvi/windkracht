@@ -30,22 +30,30 @@ Route::middleware('auth')->group(function () {
         Route::get('/customer/dashboard', [CustomerDashboardController::class, 'index'])->name('customer.dashboard');
         Route::get('/customer/personal-info', [CustomerDashboardController::class, 'editPersonalInfo'])->name('customer.personal-info');
         Route::post('/customer/personal-info', [CustomerDashboardController::class, 'updatePersonalInfo'])->name('customer.personal-info.store');
-        Route::get('/customer/make-reservation', [CustomerDashboardController::class, 'makeReservation'])->name('customer.make-reservation');
-        Route::post('/customer/make-reservation', [CustomerDashboardController::class, 'storeReservation'])->name('customer.make-reservation.store');
-        Route::post('/customer/reservations/{id}/payment', [CustomerDashboardController::class, 'markPaymentReceived'])->name('customer.mark-payment');
-        Route::get('/customer/reservations', [CustomerDashboardController::class, 'viewReservations'])->name('customer.reservations');
-        Route::post('/customer/lessons/{id}/cancel', [CustomerDashboardController::class, 'cancelLesson'])->name('customer.cancel-lesson');
+        
+        // These routes require complete profile
+        Route::middleware('complete-profile')->group(function () {
+            Route::get('/customer/make-reservation', [CustomerDashboardController::class, 'makeReservation'])->name('customer.make-reservation');
+            Route::post('/customer/make-reservation', [CustomerDashboardController::class, 'storeReservation'])->name('customer.make-reservation.store');
+            Route::post('/customer/reservations/{id}/payment', [CustomerDashboardController::class, 'markPaymentReceived'])->name('customer.mark-payment');
+            Route::get('/customer/reservations', [CustomerDashboardController::class, 'viewReservations'])->name('customer.reservations');
+            Route::post('/customer/lessons/{id}/cancel', [CustomerDashboardController::class, 'cancelLesson'])->name('customer.cancel-lesson');
+        });
     });
 
     // Instructor routes
     Route::middleware('role:instructor')->group(function () {
-        Route::get('/instructor/dashboard', [InstructorDashboardController::class, 'index'])->name('instructor.dashboard');
         Route::get('/instructor/personal-info', [InstructorDashboardController::class, 'editPersonalInfo'])->name('instructor.personal-info');
         Route::post('/instructor/personal-info', [InstructorDashboardController::class, 'updatePersonalInfo'])->name('instructor.personal-info.store');
-        Route::get('/instructor/schedule', [InstructorDashboardController::class, 'schedule'])->name('instructor.schedule');
-        Route::post('/instructor/lessons/{id}/cancel', [InstructorDashboardController::class, 'cancelLesson'])->name('instructor.cancel-lesson');
-        Route::get('/instructor/customers', [InstructorDashboardController::class, 'viewCustomers'])->name('instructor.customers');
-        Route::get('/instructor/customers/{id}', [InstructorDashboardController::class, 'manageCustomer'])->name('instructor.manage-customer');
+        
+        // These routes require complete profile
+        Route::middleware('complete-profile')->group(function () {
+            Route::get('/instructor/dashboard', [InstructorDashboardController::class, 'index'])->name('instructor.dashboard');
+            Route::get('/instructor/schedule', [InstructorDashboardController::class, 'schedule'])->name('instructor.schedule');
+            Route::post('/instructor/lessons/{id}/cancel', [InstructorDashboardController::class, 'cancelLesson'])->name('instructor.cancel-lesson');
+            Route::get('/instructor/customers', [InstructorDashboardController::class, 'viewCustomers'])->name('instructor.customers');
+            Route::get('/instructor/customers/{id}', [InstructorDashboardController::class, 'manageCustomer'])->name('instructor.manage-customer');
+        });
     });
 
     // Owner routes
