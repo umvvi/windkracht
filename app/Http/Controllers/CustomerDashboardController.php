@@ -285,7 +285,7 @@ class CustomerDashboardController extends Controller
      */
     public function showRescheduleForm($lessonId)
     {
-        $lesson = \App\Models\Lesson::with('reservation.package.location')->findOrFail($lessonId);
+        $lesson = \App\Models\Lesson::with('reservation.package', 'reservation.location')->findOrFail($lessonId);
         $reservation = $lesson->reservation;
 
         if ($reservation->customer_id !== Auth::id()) {

@@ -18,11 +18,6 @@
             <p style="color: #6b7280; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin: 0 0 0.5rem 0;">LOCATIE</p>
             <p style="font-size: 1.1rem; font-weight: 700; color: #003d7a; margin: 0;">{{ $reservation->location->name }}</p>
         </div>
-        <div style="background: white; border-radius: 0.3rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 1.5rem; border-left: 4px solid #10b981;">
-            <p style="color: #6b7280; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin: 0 0 0.5rem 0;">GEANNULEERDE LES</p>
-            <p style="font-size: 1rem; font-weight: 700; color: #003d7a; margin: 0;">{{ $lesson->start_time->format('d-m-Y H:i') }}</p>
-        </div>
-    </div>
 
     <form action="{{ route('customer.reschedule-lesson.store', $lesson->id) }}" method="POST" id="rescheduleForm">
         @csrf
