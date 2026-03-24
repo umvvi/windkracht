@@ -2,11 +2,45 @@
 
 <?php $__env->startSection('title', 'Nieuwe Lesdatum Kiezen - Windkracht-12'); ?>
 
+<!-- Add Flatpickr CSS for better date picker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+/* Flatpickr styling */
+.flatpickr-input {
+    width: 100% !important;
+}
+
+.flatpickr-calendar {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    border-radius: 0.5rem !important;
+}
+
+.flatpickr-day.selected {
+    background: #0369a1 !important;
+    color: white !important;
+}
+
+.flatpickr-day.today {
+    border-color: #0369a1 !important;
+}
+
+.flatpickr-months .flatpickr-month {
+    background: white !important;
+}
+
+.flatpickr-current-month input.cur-year {
+    color: #003d7a !important;
+    font-weight: 700 !important;
+}
+</style>
+
 <?php $__env->startSection('content'); ?>
 <div style="margin-bottom: 3rem;">
     <!-- Header Section with Gradient -->
     <div style="background: linear-gradient(135deg, #003d7a 0%, #0369a1 100%); border-radius: 0.5rem; padding: 2.5rem 2rem; margin-bottom: 3rem; color: white;">
-        <p style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">📅 LESDATUM WIJZIGEN</p>
+        <p style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">LESDATUM WIJZIGEN</p>
         <h1 style="font-size: 2.2rem; font-weight: 800; margin: 0;">Kies je Nieuwe Lesdatum</h1>
         <p style="margin: 0.5rem 0 0 0; opacity: 0.95; font-size: 0.95rem;">Je annulering is geaccepteerd. Vind nu een nieuw moment dat beter voor je uitkomt.</p>
     </div>
@@ -47,23 +81,22 @@
                         <?php echo csrf_field(); ?>
 
                         <div style="margin-bottom: 1.5rem;">
-                            <label for="new_date" style="display: block; color: #1f2937; font-weight: 700; margin-bottom: 0.75rem; font-size: 0.95rem;">📅 Datum & Tijd</label>
+                            <label for="new_date" style="display: block; color: #1f2937; font-weight: 700; margin-bottom: 0.75rem; font-size: 0.95rem;">Datum & Tijd</label>
                             <input 
-                                type="datetime-local" 
+                                type="text" 
                                 id="new_date" 
                                 name="new_date" 
-                                style="width: 100%; padding: 0.9rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.4rem; font-size: 1rem; box-sizing: border-box; font-weight: 500; transition: all 0.3s;"
-                                onfocus="this.style.borderColor='#0369a1'; this.style.boxShadow='0 0 0 3px rgba(3, 105, 161, 0.1)'"
-                                onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'"
+                                style="width: 100%; padding: 0.9rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.4rem; font-size: 1rem; box-sizing: border-box; font-weight: 500;"
+                                placeholder="Klik hier om datum en tijd te selecteren"
                                 required
-                                autofocus
+                                autocomplete="off"
                             >
                             <?php $__errorArgs = ['new_date'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <span style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem; display: block; font-weight: 500;">❌ <?php echo e($message); ?></span>
+                                <span style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem; display: block; font-weight: 500;"><?php echo e($message); ?></span>
                             <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -96,22 +129,19 @@ unset($__errorArgs, $__bag); ?>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
             <!-- Tip 1 -->
             <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e0f2fe 100%); border-radius: 0.5rem; padding: 1.5rem; border-left: 4px solid #0369a1;">
-                <p style="font-size: 1.3rem; margin: 0 0 0.5rem 0;">⏰</p>
-                <p style="color: #003d7a; font-weight: 700; margin: 0 0 0.5rem 0;">24-uur Regel</p>
+                <p style="color: #003d7a; font-weight: 700; margin: 0 0 0.5rem 0; font-size: 1.1rem;">24-uur Regel</p>
                 <p style="color: #666; margin: 0; font-size: 0.9rem;">Lessen moeten minstens 24 uur van tevoren geboekt worden.</p>
             </div>
 
             <!-- Tip 2 -->
             <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 0.5rem; padding: 1.5rem; border-left: 4px solid #10b981;">
-                <p style="font-size: 1.3rem; margin: 0 0 0.5rem 0;">👨‍🏫</p>
-                <p style="color: #15803d; font-weight: 700; margin: 0 0 0.5rem 0;">Gekwalificeerde Instructeur</p>
+                <p style="color: #15803d; font-weight: 700; margin: 0 0 0.5rem 0; font-size: 1.1rem;">Gekwalificeerde Instructeur</p>
                 <p style="color: #666; margin: 0; font-size: 0.9rem;">Een ervaren instructeur van ons team zal je begeleiden.</p>
             </div>
 
             <!-- Tip 3 -->
             <div style="background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%); border-radius: 0.5rem; padding: 1.5rem; border-left: 4px solid #ec4899;">
-                <p style="font-size: 1.3rem; margin: 0 0 0.5rem 0;">📧</p>
-                <p style="color: #be185d; font-weight: 700; margin: 0 0 0.5rem 0;">Bevestigingsmail</p>
+                <p style="color: #be185d; font-weight: 700; margin: 0 0 0.5rem 0; font-size: 1.1rem;">Bevestigingsmail</p>
                 <p style="color: #666; margin: 0; font-size: 0.9rem;">Je ontvangt een mail met alle details van je nieuwe les.</p>
             </div>
         </div>
@@ -147,6 +177,34 @@ unset($__errorArgs, $__bag); ?>
         </div>
     </div>
 </div>
+
+<script>
+// Initialize Flatpickr for date picker
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+const minDate = tomorrow.toISOString().split('T')[0];
+
+flatpickr('#new_date', {
+    enableTime: true,
+    dateFormat: "Y-m-d\\TH:i",
+    minDate: minDate,
+    minTime: "08:00",
+    maxTime: "18:00",
+    time_24hr: true,
+    minuteIncrement: 15,
+    locale: {
+        firstDayOfWeek: 1,
+        weekdays: {
+            shorthand: ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'],
+            longhand: ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag']
+        },
+        months: {
+            shorthand: ['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'],
+            longhand: ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
+        }
+    }
+});
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Comunicación\Desktop\school\resources\views/customer/reschedule-lesson.blade.php ENDPATH**/ ?>
