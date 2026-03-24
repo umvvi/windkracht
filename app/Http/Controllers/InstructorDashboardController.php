@@ -9,6 +9,7 @@ use App\Models\Reservation;
 use App\Rules\DutchPostalCode;
 use App\Rules\DutchPhoneNumber;
 use App\Rules\BsnNumber;
+use App\Rules\NoNumbers;
 use App\Mail\LessonCancellation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,8 +47,8 @@ class InstructorDashboardController extends Controller
     public function updatePersonalInfo(Request $request)
     {
         $request->validate([
-            'first_name' => 'required|string|max:50',
-            'last_name' => 'required|string|max:50',
+            'first_name' => ['required', 'string', 'max:50', new NoNumbers('Voornaam')],
+            'last_name' => ['required', 'string', 'max:50', new NoNumbers('Achternaam')],
             'street_address' => 'required|string|max:100',
             'city' => 'required|string|max:50',
             'postal_code' => ['nullable', new DutchPostalCode()],
