@@ -93,23 +93,21 @@ class OwnerDashboardController extends Controller
 
         $user = User::findOrFail($userId);
 
-        // If changing to instructor, check if profile is complete
+        // If changing to instructor, check if BSN is filled
         if ($request->role === 'instructor') {
             $personalInfo = $user->personalInformation;
 
-            // Check if profile exists and all required fields are filled
-            if (!$personalInfo || empty($personalInfo->first_name) || empty($personalInfo->last_name) 
-                || empty($personalInfo->street_address) || empty($personalInfo->city) 
-                || empty($personalInfo->phone_mobile) || empty($personalInfo->bsn)) {
-                
-                return back()->with('error', 'Kan niet naar instructeur veranderen: dit persoon moet eerst hun volledige profiel invullen (inclusief BSN).');
+            // For instructors, BSN is required
+            if (!$personalInfo || empty($personalInfo->bsn)) {
+                return back()->with('warning', 'BSN is verplicht voor instructeurs. Vraag deze persoon hun BSN in te vullen, of u kunt dit handmatig invoeren als ze het geven.');
             }
         }
 
         $user->role = $request->role;
         $user->save();
 
-        return back()->with('success', "User role changed to {$request->role}");
+        $roleName = $request->role === 'instructor' ? 'Instructeur' : ($request->role === 'owner' ? 'Eigenaar' : 'Klant');
+        return back()->with('success', "Gebruikersrol gewijzigd naar {$roleName}");
     }
 
     /**
