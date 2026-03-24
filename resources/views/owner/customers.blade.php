@@ -42,17 +42,16 @@
                                                      !empty($customer->personalInformation->last_name) &&
                                                      !empty($customer->personalInformation->street_address) &&
                                                      !empty($customer->personalInformation->city) &&
-                                                     !empty($customer->personalInformation->phone_mobile) &&
-                                                     !empty($customer->personalInformation->bsn);
+                                                     !empty($customer->personalInformation->phone_mobile);
                                 @endphp
                                 @if($profileComplete)
                                 <form action="{{ route('owner.change-role', $customer->id) }}" method="POST" style="display: inline;">
                                     @csrf
                                     <input type="hidden" name="role" value="instructor">
-                                    <button type="submit" style="color: #22c55e; background: none; border: none; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 0.9rem;" onclick="return confirm('Deze klant als instructeur instellen?')">→ Instructeur</button>
+                                    <button type="submit" style="color: #22c55e; background: none; border: none; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 0.9rem;" onclick="return confirm('Deze klant als instructeur instellen? (BSN is nog nodig voor instructeurs)')">→ Instructeur</button>
                                 </form>
                                 @else
-                                <span style="color: #9ca3af; font-weight: 600; font-size: 0.9rem; cursor: not-allowed;" title="Profiel onvolledig - zorg dat BSN is ingevuld">→ Instructeur</span>
+                                <span style="color: #9ca3af; font-weight: 600; font-size: 0.9rem; cursor: not-allowed;" title="Profiel onvolledig - zorg dat naam, adres, plaats en telefoonnummer zijn ingevuld">→ Instructeur</span>
                                 @endif
                             </div>
                         </td>
