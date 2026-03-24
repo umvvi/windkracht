@@ -262,7 +262,10 @@ class CustomerDashboardController extends Controller
     public function cancelLesson(Request $request, $lessonId)
     {
         $request->validate([
-            'reason' => 'required|string',
+            'reason' => 'required|string|min:10',
+        ], [
+            'reason.required' => 'Voer een reden in voor annulering.',
+            'reason.min' => 'Voer minstens 10 karakters in.',
         ]);
 
         $lesson = \App\Models\Lesson::findOrFail($lessonId);
@@ -274,7 +277,99 @@ class CustomerDashboardController extends Controller
 
         $lesson->cancel('customer_request', $request->reason);
 
-        return back()->with('success', 'Lesson cancelled. You can now select a new date.');
+        return back()->with('success', 'Les geannuleerd. Je kunt nu een nieuwe datum kiezen.');
+    }
+
+    /**
+     * Show reschedule form for cancelled lesson
+     */
+    public function showRescheduleForm($lessonId)
+    {
+        $lesson = \App\Models\Lesson::with('reservation.package.location')->findOrFail($lessonId);
+        $reservation = $lesson->reservation;
+
+        if ($reservation->customer_id !== Auth::id()) {
+            return back()->with('error', 'Unauthorized');
+        }
+
+        if ($lesson->status !== 'cancelled') {
+            return back()->with('error', 'Alleen geannuleerde lessen kunnen opnieuw worden ingepland.');
+        }
+
+        // Get remaining sessions to book
+        $remainingSessions = $reservation->package->num_sessions - ($reservation->sessions_completed ?? 0);
+        $completedCount = 0;
+        
+        foreach ($reservation->lessons as $l) {
+            if ($l->status === 'completed') {
+                $completedCount++;
+            }
+        }
+
+        $remainingSessions = $reservation->package->num_sessions - $completedCount;
+
+        return view('customer.reschedule-lesson', compact('lesson', 'reservation', 'remainingSessions'));
+    }
+
+    /**
+     * Store rescheduled lesson
+     */
+    public function rescheduleLesson(Request $request, $lessonId)
+    {
+        $request->validate([
+            'new_date' => 'required|date_format:Y-m-d\TH:i|after_or_equal:now',
+        ], [
+            'new_date.required' => 'Selecteer een nieuwe datum.',
+            'new_date.after_or_equal' => 'Kies een datum in de toekomst.',
+        ]);
+
+        $lesson = \App\Models\Lesson::findOrFail($lessonId);
+        $reservation = $lesson->reservation;
+
+        if ($reservation->customer_id !== Auth::id()) {
+            return back()->with('error', 'Unauthorized');
+        }
+
+        if ($lesson->status !== 'cancelled') {
+            return back()->with('error', 'Alleen geannuleerde lessen kunnen opnieuw worden ingepland.');
+        }
+
+        // Get new date
+        $newDate = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $request->new_date);
+        $lessonDuration = 2.5;
+        $endTime = $newDate->copy()->addHours($lessonDuration);
+
+        // Find available instructor with 3+ hour gap
+        $availableInstructors = User::where('role', 'instructor')->where('is_active', true)->get();
+        $instructor = null;
+
+        foreach ($availableInstructors as $potentialInstructor) {
+            $conflicts = \App\Models\Lesson::where('instructor_id', $potentialInstructor->id)
+                ->where('status', 'scheduled')
+                ->where(function ($q) use ($newDate, $endTime) {
+                    $q->whereBetween('start_time', [$newDate->copy()->subHours(3), $endTime->copy()->addHours(3)]);
+                })->count();
+
+            if ($conflicts === 0) {
+                $instructor = $potentialInstructor;
+                break;
+            }
+        }
+
+        if (!$instructor) {
+            return back()->with('error', 'Geen instructeur beschikbaar voor deze datum. Kies een ander moment.');
+        }
+
+        // Update lesson with new date and instructor
+        $lesson->start_time = $newDate;
+        $lesson->end_time = $endTime;
+        $lesson->instructor_id = $instructor->id;
+        $lesson->status = 'scheduled';
+        $lesson->cancellation_reason = null;
+        $lesson->cancellation_type = null;
+        $lesson->save();
+
+        return back()->with('success', 'Les opnieuw ingepland voor ' . $newDate->format('d-m-Y H:i'));
     }
 
     /**

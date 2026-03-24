@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/customer/reservations/{id}/payment', [CustomerDashboardController::class, 'markPaymentReceived'])->name('customer.mark-payment');
             Route::get('/customer/reservations', [CustomerDashboardController::class, 'viewReservations'])->name('customer.reservations');
             Route::post('/customer/lessons/{id}/cancel', [CustomerDashboardController::class, 'cancelLesson'])->name('customer.cancel-lesson');
+            Route::get('/customer/lessons/{id}/reschedule', [CustomerDashboardController::class, 'showRescheduleForm'])->name('customer.reschedule-lesson');
+            Route::post('/customer/lessons/{id}/reschedule', [CustomerDashboardController::class, 'rescheduleLesson'])->name('customer.reschedule-lesson.store');
         });
     });
 

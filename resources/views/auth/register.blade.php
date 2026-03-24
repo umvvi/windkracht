@@ -41,12 +41,6 @@
                     </div>
 
                     <!-- Submit Button -->
-                            <span style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem; display: block;">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Submit Button -->
-                    <!-- Submit Button -->
                     <button 
                         type="submit" 
                         style="width: 100%; background: #ff6b35; color: white; font-weight: 700; padding: 0.9rem; border-radius: 0.3rem; border: none; cursor: pointer; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s;"
