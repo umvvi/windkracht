@@ -61,6 +61,9 @@
                                     <p style="font-weight: 700; color: #003d7a; margin: 0 0 0.25rem 0;">{{ $lesson->start_time->format('d-m-Y H:i') }}</p>
                                     <p style="font-size: 0.9rem; color: #666; margin: 0;">Instructeur: {{ $lesson->instructor->personalInformation?->full_name ?? 'Unknown' }}</p>
                                     <span style="display: inline-block; margin-top: 0.5rem; padding: 0.2rem 0.6rem; border-radius: 0.3rem; background: {{ $lesson->status === 'scheduled' ? '#dbeafe' : '#fee2e2' }}; color: {{ $lesson->status === 'scheduled' ? '#0c4a6e' : '#7f1d1d' }}; font-size: 0.8rem; font-weight: 600;">{{ $lesson->status === 'scheduled' ? 'Ingepland' : ($lesson->status === 'cancelled' ? 'Afgebroken' : ucfirst($lesson->status)) }}</span>
+                                    @if ($lesson->status === 'cancelled' && $lesson->cancellation_status === 'pending')
+                                    <span style="display: inline-block; margin-left: 0.5rem; padding: 0.2rem 0.6rem; border-radius: 0.3rem; background: #fef3c7; color: #78350f; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem;">Wacht op Goedkeuring</span>
+                                    @endif
                                 </div>
                                 @if ($lesson->status === 'scheduled')
                                 <button 
@@ -98,7 +101,7 @@
 <div id="cancelModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
     <div style="background: white; border-radius: 0.3rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-width: 500px; width: 90%; padding: 2rem;">
         <h2 style="font-size: 1.3rem; font-weight: 700; color: #003d7a; margin: 0 0 1rem 0;">Les Afzeggen</h2>
-        <p style="color: #666; margin-bottom: 1.5rem;">Voer de reden in waarom je deze les wilt afzeggen.</p>
+        <p style="color: #666; margin-bottom: 1.5rem;">Voer de reden in waarom je deze les wilt afzeggen. De eigenaar van Windkracht-12 zal je aanvraag beoordelen en je via e-mail laten weten of deze is goedgekeurd.</p>
         
         <form id="cancelForm" method="POST" style="display: none;">
             @csrf

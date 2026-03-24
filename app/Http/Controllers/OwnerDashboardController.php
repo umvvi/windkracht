@@ -231,4 +231,91 @@ class OwnerDashboardController extends Controller
         $status = $user->is_active ? 'activated' : 'deactivated';
         return back()->with('success', "User {$status}");
     }
+
+    /**
+     * View cancellation requests pending approval
+     */
+    public function viewCancellationRequests()
+    {
+        $pendingCancellations = Lesson::where('cancellation_status', 'pending')
+            ->with('reservation.customer.personalInformation', 'instructor.personalInformation', 'reservation.package')
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        $approvedCancellations = Lesson::where('cancellation_status', 'approved')
+            ->with('reservation.customer.personalInformation', 'instructor.personalInformation', 'reservation.package')
+            ->orderBy('updated_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        $rejectedCancellations = Lesson::where('cancellation_status', 'rejected')
+            ->with('reservation.customer.personalInformation', 'instructor.personalInformation', 'reservation.package')
+            ->orderBy('updated_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('owner.cancellation-requests', compact(
+            'pendingCancellations',
+            'approvedCancellations',
+            'rejectedCancellations'
+        ));
+    }
+
+    /**
+     * Approve lesson cancellation request
+     */
+    public function approveCancellation($lessonId)
+    {
+        $lesson = Lesson::findOrFail($lessonId);
+
+        if ($lesson->cancellation_status !== 'pending') {
+            return back()->with('error', 'Deze annulering is al verwerkt.');
+        }
+
+        $lesson->cancellation_status = 'approved';
+        $lesson->save();
+
+        // Send email to customer
+        $customer = $lesson->reservation->customer;
+        try {
+            \Mail::to($customer->email)->send(new \App\Mail\CancellationApproved($lesson));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send cancellation approval email: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Annulering goedgekeurd. Klant kan nu een nieuwe datum kiezen.');
+    }
+
+    /**
+     * Reject lesson cancellation request
+     */
+    public function rejectCancellation(Request $request, $lessonId)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|min:10|max:500',
+        ], [
+            'rejection_reason.required' => 'Voer een reden in voor afwijzing.',
+            'rejection_reason.min' => 'Reden moet minstens 10 karakters zijn.',
+        ]);
+
+        $lesson = Lesson::findOrFail($lessonId);
+
+        if ($lesson->cancellation_status !== 'pending') {
+            return back()->with('error', 'Deze annulering is al verwerkt.');
+        }
+
+        $lesson->cancellation_status = 'rejected';
+        $lesson->status = 'scheduled'; // Revert status back to scheduled
+        $lesson->save();
+
+        // Send email to customer
+        $customer = $lesson->reservation->customer;
+        try {
+            \Mail::to($customer->email)->send(new \App\Mail\CancellationRejected($lesson, $request->rejection_reason));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send cancellation rejection email: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Annulering afgewezen. Klant is geïnformeerd.');
+    }
 }

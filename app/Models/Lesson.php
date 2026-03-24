@@ -64,6 +64,8 @@ class Lesson extends Model
         $this->status = 'cancelled';
         $this->cancellation_type = $type;
         $this->cancellation_reason = $reason;
+        // Set cancellation_status to pending for customer requests, approved for system cancellations
+        $this->cancellation_status = ($type === 'customer_request') ? 'pending' : 'approved';
         $this->save();
 
         // Only send email for instructor and bad_weather cancellations (not customer requests)

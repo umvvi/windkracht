@@ -296,6 +296,11 @@ class CustomerDashboardController extends Controller
             return back()->with('error', 'Alleen geannuleerde lessen kunnen opnieuw worden ingepland.');
         }
 
+        // Check if cancellation was approved
+        if ($lesson->cancellation_status !== 'approved') {
+            return back()->with('error', 'Je annulering moet eerst door de Windkracht-12 eigenaar worden goedgekeurd. Je ontvangt een mail zodra dit gebeurd is.');
+        }
+
         // Get remaining sessions to book
         $remainingSessions = $reservation->package->num_sessions - ($reservation->sessions_completed ?? 0);
         $completedCount = 0;

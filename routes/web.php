@@ -78,5 +78,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/owner/lessons/{id}/cancel', [OwnerDashboardController::class, 'cancelLesson'])->name('owner.cancel-lesson');
         Route::get('/owner/instructors/{id}/schedule', [OwnerDashboardController::class, 'viewInstructorSchedule'])->name('owner.instructor-schedule');
         Route::post('/owner/users/{id}/toggle', [OwnerDashboardController::class, 'toggleUserStatus'])->name('owner.toggle-status');
+        Route::get('/owner/cancellation-requests', [OwnerDashboardController::class, 'viewCancellationRequests'])->name('owner.cancellation-requests');
+        Route::post('/owner/cancellations/{id}/approve', [OwnerDashboardController::class, 'approveCancellation'])->name('owner.approve-cancellation');
+        Route::post('/owner/cancellations/{id}/reject', [OwnerDashboardController::class, 'rejectCancellation'])->name('owner.reject-cancellation');
     });
 });
