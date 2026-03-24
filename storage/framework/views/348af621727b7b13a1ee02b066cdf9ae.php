@@ -184,7 +184,10 @@ const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
 const minDate = tomorrow.toISOString().split('T')[0];
 
-flatpickr('#new_date', {
+// Create hidden input for form submission if needed
+const newDateInput = document.getElementById('new_date');
+
+const pickerInstance = flatpickr('#new_date', {
     enableTime: true,
     dateFormat: "Y-m-d\\TH:i",
     minDate: minDate,
@@ -192,6 +195,10 @@ flatpickr('#new_date', {
     maxTime: "18:00",
     time_24hr: true,
     minuteIncrement: 15,
+    onChange: function(selectedDates, dateStr, instance) {
+        // Ensure the field has the correct value
+        newDateInput.value = dateStr;
+    },
     locale: {
         firstDayOfWeek: 1,
         weekdays: {
@@ -203,6 +210,25 @@ flatpickr('#new_date', {
             longhand: ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
         }
     }
+});
+
+// Prevent multiple form submissions
+let formSubmitting = false;
+document.getElementById('rescheduleForm').addEventListener('submit', function(e) {
+    if (formSubmitting) {
+        e.preventDefault();
+        return false;
+    }
+    
+    // Validate that a date was selected
+    const dateValue = newDateInput.value.trim();
+    if (!dateValue) {
+        e.preventDefault();
+        alert('Selecteer alstublieft een datum en tijd');
+        return false;
+    }
+    
+    formSubmitting = true;
 });
 </script>
 <?php $__env->stopSection(); ?>

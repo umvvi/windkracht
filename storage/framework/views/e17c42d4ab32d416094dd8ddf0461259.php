@@ -74,6 +74,18 @@
             background: white;
             padding: 2rem;
             border-radius: 0.3rem;
+            border-left: 4px solid #10b981;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        ">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #003d7a; margin: 0 0 0.5rem 0;">Annuleringsaanvragen</h3>
+            <p style="color: #666; margin-bottom: 1rem; font-size: 0.95rem;">Beoordeel lessen annuleringen</p>
+            <a href="<?php echo e(route('owner.cancellation-requests')); ?>" style="color: #10b981; text-decoration: none; font-weight: 600; font-size: 0.9rem;">Aanvragen Bekijken →</a>
+        </div>
+
+        <div style="
+            background: white;
+            padding: 2rem;
+            border-radius: 0.3rem;
             border-left: 4px solid #0ea5e9;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         ">

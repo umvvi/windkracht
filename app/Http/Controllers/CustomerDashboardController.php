@@ -296,9 +296,14 @@ class CustomerDashboardController extends Controller
             return back()->with('error', 'Alleen geannuleerde lessen kunnen opnieuw worden ingepland.');
         }
 
-        // Check if cancellation was approved
-        if ($lesson->cancellation_status !== 'approved') {
+        // Check if cancellation was approved (null is treated as approved for backwards compatibility)
+        if ($lesson->cancellation_status === 'pending') {
             return back()->with('error', 'Je annulering moet eerst door de Windkracht-12 eigenaar worden goedgekeurd. Je ontvangt een mail zodra dit gebeurd is.');
+        }
+
+        // Check if cancellation was rejected
+        if ($lesson->cancellation_status === 'rejected') {
+            return back()->with('error', 'Je annuleringsaanvraag is afgewezen. De les blijft in je schema staan.');
         }
 
         // Get remaining sessions to book
@@ -321,12 +326,32 @@ class CustomerDashboardController extends Controller
      */
     public function rescheduleLesson(Request $request, $lessonId)
     {
+        $lesson = \App\Models\Lesson::findOrFail($lessonId);
+        $reservation = $lesson->reservation;
+
+        if ($reservation->customer_id !== Auth::id()) {
+            return redirect()->route('customer.reservations')->with('error', 'Unauthorized');
+        }
+
+        if ($lesson->status !== 'cancelled') {
+            return redirect()->route('customer.reservations')->with('error', 'Alleen geannuleerde lessen kunnen opnieuw worden ingepland.');
+        }
+
+        // Check approval status
+        if ($lesson->cancellation_status === 'pending') {
+            return redirect()->route('customer.reservations')->with('error', 'Je annulering moet eerst worden goedgekeurd.');
+        }
+
+        if ($lesson->cancellation_status === 'rejected') {
+            return redirect()->route('customer.reservations')->with('error', 'Je annuleringsaanvraag is afgewezen.');
+        }
+
         // Use try-catch to handle date parsing issues
         try {
             $newDateString = $request->input('new_date');
             
             if (empty($newDateString)) {
-                return back()->with('error', 'Selecteer een geldige datum en tijd.');
+                return redirect()->route('customer.reschedule-lesson', $lessonId)->with('error', 'Selecteer een geldige datum en tijd.');
             }
 
             // Try parsing the date from Flatpickr format (Y-m-d\TH:i or Y-m-d H:i)
@@ -341,27 +366,16 @@ class CustomerDashboardController extends Controller
 
             // Check if date is in the future
             if ($newDate->isPast()) {
-                return back()->with('error', 'De gekozen datum moet in de toekomst liggen.');
+                return redirect()->route('customer.reschedule-lesson', $lessonId)->with('error', 'De gekozen datum moet in de toekomst liggen.');
             }
 
             // Check if date is at least 24 hours away
             if ($newDate->diffInHours(\Carbon\Carbon::now()) < 24) {
-                return back()->with('error', 'Lessen moeten minstens 24 uur van tevoren geboekt worden.');
+                return redirect()->route('customer.reschedule-lesson', $lessonId)->with('error', 'Lessen moeten minstens 24 uur van tevoren geboekt worden.');
             }
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Ongeldig datumformat. Gebruik het datumkiezer formulier.');
-        }
-
-        $lesson = \App\Models\Lesson::findOrFail($lessonId);
-        $reservation = $lesson->reservation;
-
-        if ($reservation->customer_id !== Auth::id()) {
-            return back()->with('error', 'Unauthorized');
-        }
-
-        if ($lesson->status !== 'cancelled') {
-            return back()->with('error', 'Alleen geannuleerde lessen kunnen opnieuw worden ingepland.');
+            return redirect()->route('customer.reschedule-lesson', $lessonId)->with('error', 'Ongeldig datumformat. Gebruik het datumkiezer formulier.');
         }
 
         // Calculate end time based on lesson duration
@@ -386,7 +400,7 @@ class CustomerDashboardController extends Controller
         }
 
         if (!$instructor) {
-            return back()->with('error', 'Geen instructeur beschikbaar voor deze datum. Kies een ander moment.');
+            return redirect()->route('customer.reschedule-lesson', $lessonId)->with('error', 'Geen instructeur beschikbaar voor deze datum. Kies een ander moment.');
         }
 
         // Update lesson with new date and instructor
@@ -398,7 +412,7 @@ class CustomerDashboardController extends Controller
         $lesson->cancellation_type = null;
         $lesson->save();
 
-        return back()->with('success', 'Les opnieuw ingepland voor ' . $newDate->format('d-m-Y H:i'));
+        return redirect()->route('customer.reservations')->with('success', 'Les opnieuw ingepland voor ' . $newDate->format('d-m-Y H:i'));
     }
 
     /**
