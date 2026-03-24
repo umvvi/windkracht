@@ -28,8 +28,7 @@
                                  !empty($customer->personalInformation->last_name) &&
                                  !empty($customer->personalInformation->street_address) &&
                                  !empty($customer->personalInformation->city) &&
-                                 !empty($customer->personalInformation->phone_mobile) &&
-                                 !empty($customer->personalInformation->bsn);
+                                 !empty($customer->personalInformation->phone_mobile);
             ?>
             <form action="<?php echo e(route('owner.change-role', $customer->id)); ?>" method="POST" style="display: flex; gap: 1rem; align-items: flex-end;">
                 <?php echo csrf_field(); ?>
@@ -44,7 +43,7 @@
                         <option value="owner" <?php echo e($customer->role === 'owner' ? 'selected' : ''); ?>>Eigenaar (Owner)</option>
                     </select>
                     <?php if(!$profileComplete): ?>
-                    <small style="color: #ff6b35; font-size: 0.8rem; display: block; margin-top: 0.25rem;">⚠️ Zorg dat alle velden (inclusief BSN) zijn ingevuld om naar instructeur te veranderen</small>
+                    <small style="color: #ff6b35; font-size: 0.8rem; display: block; margin-top: 0.25rem;">⚠️ Zorg dat naam, adres, plaats en telefoonnummer zijn ingevuld. BSN kan later toegevoegd worden.</small>
                     <?php endif; ?>
                 </div>
                 <button type="submit" style="background: #0369a1; color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 0.3rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#0370a9'" onmouseout="this.style.background='#0369a1'">

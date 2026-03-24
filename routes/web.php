@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ActivationController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\InstructorDashboardController;
 use App\Http\Controllers\OwnerDashboardController;
@@ -19,6 +20,10 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.st
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.store');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Activation routes (public - no authentication required)
+Route::get('/activate/{token}', [ActivationController::class, 'show'])->name('activation.show');
+Route::post('/activate/{token}', [ActivationController::class, 'activate'])->name('activation.activate');
 
 // Protected routes - require authentication
 Route::middleware('auth')->group(function () {

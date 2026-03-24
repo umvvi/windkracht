@@ -18,8 +18,10 @@
                 <form action="{{ route('register.store') }}" method="POST">
                     @csrf
 
+                    <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.95rem;">Voer je e-mailadres in. Je ontvangt een welkomstbericht met een activatielink.</p>
+
                     <!-- Email Field -->
-                    <div style="margin-bottom: 1.5rem;">
+                    <div style="margin-bottom: 2rem;">
                         <label for="email" style="display: block; color: #1f2937; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem;">E-mailadres</label>
                         <input 
                             type="email" 
@@ -31,57 +33,19 @@
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                             placeholder="jouw.email@example.com"
                             required
+                            autofocus
                         >
                         @error('email')
                             <span style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem; display: block;">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Password Field -->
-                    <div style="margin-bottom: 1rem;">
-                        <label for="password" style="display: block; color: #1f2937; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem;">Wachtwoord</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.3rem; transition: all 0.3s; font-size: 0.95rem;"
-                            onfocus="this.style.borderColor='#0369a1'; this.style.boxShadow='0 0 0 3px rgba(3, 105, 161, 0.1)'"
-                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
-                            placeholder="Minimaal 12 karakters"
-                            required
-                        >
-                        <div style="margin-top: 0.75rem; background: #f9fafb; padding: 1rem; border-radius: 0.3rem; font-size: 0.8rem; color: #666; border: 1px solid #e5e7eb;">
-                            <p style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">Wachtwoordvereisten:</p>
-                            <ul style="list-style: none; padding: 0;">
-                                <li>Minimaal 12 karakters</li>
-                                <li>Minstens 1 hoofdletter</li>
-                                <li>Minstens 1 nummer</li>
-                                <li>Minstens 1 speciaal karakter (@, #, $, %)</li>
-                            </ul>
-                        </div>
-                        @error('password')
+                    <!-- Submit Button -->
                             <span style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem; display: block;">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Confirm Password Field -->
-                    <div style="margin-bottom: 2rem;">
-                        <label for="password_confirmation" style="display: block; color: #1f2937; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem;">Wachtwoord bevestigen</label>
-                        <input 
-                            type="password" 
-                            id="password_confirmation" 
-                            name="password_confirmation" 
-                            style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.3rem; transition: all 0.3s; font-size: 0.95rem;"
-                            onfocus="this.style.borderColor='#0369a1'; this.style.boxShadow='0 0 0 3px rgba(3, 105, 161, 0.1)'"
-                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
-                            placeholder="Herhaal je wachtwoord"
-                            required
-                        >
-                        @error('password_confirmation')
-                            <span style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem; display: block;">{{ $message }}</span>
-                        @enderror
-                    </div>
-
+                    <!-- Submit Button -->
                     <!-- Submit Button -->
                     <button 
                         type="submit" 
@@ -89,7 +53,7 @@
                         onmouseover="this.style.background='#ff5520'; this.style.transform='translateY(-2px)'"
                         onmouseout="this.style.background='#ff6b35'; this.style.transform='translateY(0)'"
                     >
-                        Account Aanmaken
+                        Activatielink Versturen
                     </button>
                 </form>
 

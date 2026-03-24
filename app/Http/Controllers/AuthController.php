@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\PersonalInformation;
 use App\Models\LoginLog;
+use App\Mail\ActivationEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -20,40 +23,42 @@ class AuthController extends Controller
     }
 
     /**
-     * Store registration
+     * Store registration (step 1: email only)
      */
     public function register(Request $request)
     {
         $request->validate([
             'email' => 'required|email|unique:users',
-            'password' => [
-                'required',
-                'confirmed',
-                'min:12',
-                'regex:/[A-Z]/', // At least one uppercase letter
-                'regex:/[0-9]/', // At least one digit
-                'regex:/[@#$%^&*]/', // At least one special character
-            ],
         ], [
-            'password.regex' => 'Password must contain at least one uppercase letter, one number, and one special character (@, #, $, %, ^, &, *).',
+            'email.required' => 'E-mailadres is verplicht.',
+            'email.email' => 'Voer een geldig e-mailadres in.',
+            'email.unique' => 'Dit e-mailadres is al geregistreerd.',
         ]);
 
+        // Create user with inactive status
+        $activationToken = Str::random(64);
         $user = User::create([
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make(Str::random(32)), // Temporary password
             'role' => 'customer',
-            'is_active' => true,
+            'is_active' => false,
+            'activation_token' => $activationToken,
         ]);
 
-        Auth::login($user);
+        // Generate activation link
+        $activationLink = route('activation.show', ['token' => $activationToken]);
 
-        // Log the login
-        LoginLog::create([
-            'user_id' => $user->id,
-            'action' => 'login',
-        ]);
+        // Send activation email
+        try {
+            Mail::to($user->email)->send(new ActivationEmail($user, $activationLink));
+            \Log::info('Activation email sent to ' . $user->email);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send activation email: ' . $e->getMessage());
+            $user->delete(); // Delete user if email fails
+            return back()->with('error', 'Kon geen e-mail versturen. Probeer later opnieuw.');
+        }
 
-        return redirect()->route('customer.dashboard')->with('success', 'Registration successful!');
+        return redirect('/login')->with('success', 'Registratie gelukt! Controleer je e-mail voor de activatielink.');
     }
 
     /**
@@ -77,10 +82,18 @@ class AuthController extends Controller
         if (Auth::attempt($request->only('email', 'password'))) {
             $user = Auth::user();
 
-            // Log the login
+            // Check if user is active
+            if (!$user->is_active) {
+                Auth::logout();
+                return back()->with('error', 'Account is nog niet geactiveerd. Controleer je e-mail voor de activatielink.');
+            }
+
+            // Log the login with microsecond precision
             LoginLog::create([
                 'user_id' => $user->id,
+                'email_address' => $user->email,
                 'action' => 'login',
+                'logged_at_microseconds' => microtime(true),
             ]);
 
             // Redirect based on role
@@ -93,7 +106,7 @@ class AuthController extends Controller
             }
         }
 
-        return back()->with('error', 'Invalid credentials');
+        return back()->with('error', 'Ongeldige inloggegevens');
     }
 
     /**
@@ -102,10 +115,12 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         if (Auth::check()) {
-            // Log the logout
+            // Log the logout with microsecond precision
             LoginLog::create([
                 'user_id' => Auth::id(),
+                'email_address' => Auth::user()->email,
                 'action' => 'logout',
+                'logged_at_microseconds' => microtime(true),
             ]);
         }
 
