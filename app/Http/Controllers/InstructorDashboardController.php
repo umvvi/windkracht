@@ -6,8 +6,13 @@ use App\Models\User;
 use App\Models\PersonalInformation;
 use App\Models\Lesson;
 use App\Models\Reservation;
+use App\Rules\DutchPostalCode;
+use App\Rules\DutchPhoneNumber;
+use App\Rules\BsnNumber;
+use App\Mail\LessonCancellation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class InstructorDashboardController extends Controller
 {
@@ -45,15 +50,10 @@ class InstructorDashboardController extends Controller
             'last_name' => 'required|string|max:50',
             'street_address' => 'required|string|max:100',
             'city' => 'required|string|max:50',
-            'postal_code' => 'nullable|regex:/^\d{4}[a-zA-Z]{2}$/',
+            'postal_code' => ['nullable', new DutchPostalCode()],
             'date_of_birth' => 'nullable|date|before:today',
-            'phone_mobile' => 'required|regex:/^(\+31|0)[1-9]\d{1,9}$/',
-            'bsn' => 'nullable|regex:/^\d{9}$/',
-        ], [
-            'postal_code.regex' => 'Postcode moet het formaat XXXXAB hebben (4 cijfers en 2 letters), bijvoorbeeld 1234AB.',
-            'phone_mobile.regex' => 'Telefoonnummer moet een geldig Nederlands nummer zijn (06... of +31...).',
-            'date_of_birth.before' => 'Geboortedatum kan niet in de toekomst liggen.',
-            'bsn.regex' => 'BSN moet uit 9 cijfers bestaan.',
+            'phone_mobile' => ['required', new DutchPhoneNumber()],
+            'bsn' => ['nullable', new BsnNumber()],
         ]);
 
         $user = Auth::user();

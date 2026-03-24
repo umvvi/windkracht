@@ -6,6 +6,9 @@ use App\Models\User;
 use App\Models\PersonalInformation;
 use App\Models\Reservation;
 use App\Models\Lesson;
+use App\Rules\DutchPostalCode;
+use App\Rules\DutchPhoneNumber;
+use App\Rules\BsnNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,14 +48,14 @@ class OwnerDashboardController extends Controller
     public function updatePersonalInfo(Request $request)
     {
         $request->validate([
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'street_address' => 'required|string',
-            'city' => 'required|string',
-            'postal_code' => 'nullable|string',
-            'date_of_birth' => 'nullable|date',
-            'phone_mobile' => 'required|string',
-            'bsn' => 'nullable|string',
+            'first_name' => 'required|string|max:50',
+            'last_name' => 'required|string|max:50',
+            'street_address' => 'required|string|max:100',
+            'city' => 'required|string|max:50',
+            'postal_code' => ['nullable', new DutchPostalCode()],
+            'date_of_birth' => 'nullable|date|before:today',
+            'phone_mobile' => ['required', new DutchPhoneNumber()],
+            'bsn' => ['nullable', new BsnNumber()],
         ]);
 
         $user = Auth::user();
